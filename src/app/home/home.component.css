@@ -1,7 +1,44 @@
-.home-container {
-  height: 100%;
-  width: 100%;
+.container {
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 100vh; /* Занимает всю высоту экрана */
+}
+
+h1 {
+  text-align: center;
+  font-size: 3em;
+  margin: 0; /* Убираем стандартные отступы h1 */
+}
+
+.cursor {
+  animation: blink var(--cursor-blink-speed) step-end infinite;
+  border-radius: 50%; /* Делаем курсор кругом */
+  width: 0.4em; /* Уменьшаем размер */
+  height: 0.4em; /* Уменьшаем размер */
+  display: inline-block;
+  background-color: black; /* Цвет курсора */
+  vertical-align: middle; /* Выравниваем по вертикали */
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.join-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  border: 2px solid black;
+  color: black;
+  background-color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 1.2em;
+}
+
+.arrow {
+  margin-left: 5px;
 }
