@@ -1,0 +1,22 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* изменить на flex-start */
+  align-items: center;
+  font-family: "Figtree", sans-serif; /* Добавьте шрифт Figtree */
+}
+
+/* Добавьте отступ сверху для router-outlet, чтобы избежать перекрытия с шапкой */
+router-outlet {
+  margin-top: 60px; /* высота шапки */
+  width: 100%;
+  flex: 1; /*  */
+  overflow-y: auto; /* Добавьте это свойство, чтобы контент мог прокручиваться внутри router-outlet */
+}

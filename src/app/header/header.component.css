@@ -1,0 +1,114 @@
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  background: none;
+  margin-top: 30px !important; /* добавьте отступ здесь */
+}
+
+.app-header nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap; /* Добавьте это свойство */
+  max-width: 90%;
+  transition: transform 0.3s ease;
+}
+
+.app-header nav ul li a {
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+  padding: 10px 15px; /* увеличен padding */
+  border-radius: 20px;
+  transition: background-color 0.3s ease;
+  font-size: 1.2rem; /* увеличен font-size */
+  margin-right: 15px; /* Добавьте отступ справа */
+}
+
+.app-header nav ul li a:hover {
+  background-color: #f0f0f0;
+}
+
+.app-header nav ul li a.active,
+.app-header nav ul li a.active-link {
+	/* изменено с фона #bbb на #0F456E33, что соответствует rgba(15,69,110,0.2) */
+	background-color: #0F456E33;
+	color: white;
+}
+
+/* Стили для бургер меню */
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 10px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 101;
+  transition: transform 0.3s ease;
+}
+.hamburger span {
+  display: block;
+  width: 25px;
+  height: 3px;
+  margin: 5px;
+  background-color: #333;
+  transition: all 0.3s ease;
+}
+.hamburger.active span:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.active span:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* Для маленьких экранов (ширина менее 600px) */
+@media (max-width: 768px) {
+  .app-header {
+    padding: 5px; /* Еще меньше padding */
+  }
+
+  .app-header nav ul {
+    position: fixed;
+    top: 0;
+    right: 0;
+    background: white;
+    flex-direction: column;
+    width: 70%;
+    height: 100%;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    padding-top: 60px;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+    justify-content: center; /* Центрируем элементы на маленьких экранах */
+  }
+
+  .app-header nav ul.open {
+    transform: translateX(0);
+  }
+
+  .app-header nav ul li {
+    margin: 2px; /* Добавляем небольшой отступ между элементами */
+  }
+
+  .app-header nav ul li a {
+    padding: 4px 6px; /* Еще меньше padding для ссылок */
+    font-size: 0.8rem; /* Еще меньше font-size */
+  }
+
+  .hamburger {
+    display: block;
+  }
+}

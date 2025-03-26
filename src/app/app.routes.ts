@@ -1,16 +1,17 @@
 import { Routes } from '@angular/router';
+import { LoginComponent } from './login/login.component';
+import { SignUpComponent } from './sign-up/sign-up.component';
+import { HomeComponent } from './home/home.component'; // Импортируйте HomeComponent
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
-  {
-    path: 'home',
-    loadChildren: () => import('./home/home.module').then((m) => m.HomeModule),
-  },
+  { path: 'home', component: HomeComponent }, // Используйте HomeComponent напрямую
   {
     path: 'about',
     loadChildren: () =>
       import('./about/about.module').then((m) => m.AboutModule),
   },
-  // ...добавьте другие маршруты по необходимости...
+  { path: 'login', component: LoginComponent },
+  { path: 'sign-up', component: SignUpComponent },
   { path: '**', redirectTo: 'home' },
 ];

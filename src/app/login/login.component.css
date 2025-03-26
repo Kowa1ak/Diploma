@@ -1,0 +1,246 @@
+/* Добавьте стили для страницы входа */
+
+:root {
+  --bg-color: #f8f0e3;
+  --form-bg-color: #fff;
+  --primary-color: #0F456E;
+  --primary-color-rgb: 15, 69, 110; /* обновлённое значение RGB для #0F456E */
+  --secondary-color: #113e60;
+  --secondary-color-rgb: 17, 62, 96; /* обновлённое значение RGB для #113e60 */
+  --text-color: #333;
+  --secondary-text-color: #555;
+  --label-color: #666;
+  --input-bg-color: #f2f2f2;
+  --input-text-color: #333;
+  --gradient-color-1: #0F456E;
+  --gradient-color-1-rgb: 15, 69, 110;
+  --gradient-color-2: #113e60;
+  --gradient-color-2-rgb: 17, 62, 96;
+}
+
+.login-container {
+  /* background: white;  */
+  position: relative;
+  color: var(--text-color);
+  font-family: 'Figtree', sans-serif;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Новый контейнер, делящий экран на две части */
+.split-container {
+  width: 100%;
+  height: 80%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10%;
+}
+
+.left-section,
+.right-section {
+  width: 50%;
+  height: 100%;
+}
+
+/* Левая секция .left-section для надписи */
+.left-section {
+  padding-left: 5%;
+  padding-top: 50px;
+  position: relative; /* добавлено, чтобы изображение позиционировалось относительно left-section */
+  display: flex;
+  flex-direction: column; /* добавлено для колонкового расположения элементов */
+  justify-content: center;
+  align-items: flex-start;
+  /* Чтобы граница была видна, можно задать box-sizing: border-box 
+     и/или установить минимальную высоту, например: */
+
+  box-sizing: border-box;
+  min-height: 90vh; /* например, вместо height: 100% или вместе с ним */
+}
+
+/* Правая секция .right-section для формы */
+.right-section {
+  position: relative; /* добавлено для поднятия слоя */
+  z-index: 2;         /* устанавливаем высокий z-index, чтобы правый блок был выше левого */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-right: 5%; /* сохранение белого пространства справа */
+}
+
+/* Удалён блок .bg-wrapper, т.к. изображение теперь находится в left-section */
+
+/* Обновление стиля для .watermark */
+.watermark {
+  /* Убираем абсолютное позиционирование */
+  /* position: absolute; top: 50px; left: 5%; */
+  margin: 50px 0 0 5%; /* Используем отступы вместо абсолютного позиционирования */
+  text-align: left;
+  font-size: clamp(3rem, 5vw, 5rem); /* адаптивный размер шрифта, который уменьшается с уменьшением экрана */
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: #464646;
+  z-index: 1;
+  line-height: 1;
+}
+
+.watermark .highlight {
+  color: #0F456E;
+  display: block; /* добавлено, чтобы "AI" переходила на новую строку */
+}
+
+.login-form-wrapper {
+  background: rgba(15, 69, 110, 0.2);
+  padding: 3rem;
+  border-radius: 5rem;
+  box-shadow: 0 0.5rem 1рем rgba(0, 0, 0, 0.1);
+  width: 500px;
+  position: relative;
+  z-index: 2;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.welcome-text h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: var(--primary-color);
+  text-align: center;
+}
+
+.login-form .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.login-form label {
+  display: block;
+  font-size: 1rem;
+  color: var(--label-color);
+  margin-bottom: 0.5rem;
+}
+
+.login-form input[type="email"],
+.login-form input[type="password"] {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--input-text-color); /* отображаются только границы */
+  border-radius: 0.5rem;
+  background-color: transparent; /* убираем заливку */
+  color: var(--input-text-color);
+  box-sizing: border-box; /* добавлено, чтобы поля ввода учитывали внутренние отступы и не выходили за границы */
+  transition: border-color 0.3s ease;
+  /* убираем box-shadow */
+}
+
+.login-form input[type="email"]:focus,
+.login-form input[type="password"]:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.login-form .login-button {
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 0.5rem;
+  background-image: linear-gradient(to right, var(--gradient-color-1), var(--gradient-color-2));
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 0.25rem 0.5rem rgba(var(--gradient-color-1-rgb), 0.4);
+}
+
+.login-form .login-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0.5rem 0.75rem rgba(var(--gradient-color-1-rgb), 0.5);
+}
+
+.login-form .forgot-password {
+  display: block;
+  text-align: center;
+  margin-top: 1rem;
+  color: var(--secondary-text-color);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.login-form .forgot-password:hover {
+  color: var(--primary-color);
+}
+
+.bg-image {
+  position: relative;
+  transform: scaleX(-1);
+  max-width: 90%;
+  max-height: 90%; 
+  margin-top: -45px;
+}
+
+/* Добавлены стили для .main-oval */
+.main-oval {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;               /* ширина овала */
+  height: 100%;             /* охватывает всю высоту */
+  background: rgba(15, 69, 110, 0.2); 
+  border-top-right-radius: 100%;
+  border-bottom-right-radius: 100%;
+  z-index: -1;
+}
+
+/* Добавлены стили для .main-circle */
+.main-circle {
+  position: absolute;
+  bottom: -100px;
+  right: -100px;
+  width: 500px;
+  height: 100%;
+  background: rgba(15, 69, 110, 0.2);
+  border-radius: 50px; /* изменено: вместо круглой формы теперь прямоугольник с закругленными углами */
+  z-index: -1;
+}
+
+
+
+/* Добавлены медиа-запросы для плавного уменьшения формы при уменьшении экрана */
+@media (max-width: 1024px) {
+  .login-form-wrapper {
+    width: 80%;
+    padding: 2.5rem;
+  }
+  .login-form input[type="email"],
+  .login-form input[type="password"] {
+    padding: 0.6rem;
+    font-size: 1.05rem;
+  }
+  .login-form .login-button {
+    padding: 0.6rem;
+    font-size: 1.05rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .left-section {
+    display: none;
+  }
+  .right-section {
+    width: 100%;
+    margin: 0 auto;
+  }
+  .split-container {
+    justify-content: center;
+  }
+}
+
+body{
+  margin: 0;
+  padding: 0;
+}

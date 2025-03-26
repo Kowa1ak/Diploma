@@ -1,0 +1,38 @@
+<header class="app-header">
+  <button class="hamburger" (click)="toggleMenu()" [class.active]="menuOpen">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <nav>
+    <ul [class.open]="menuOpen">
+      <li *ngIf="!isHomePage()">
+        <a (click)="router.navigate(['/home'])" style="cursor: pointer">Home</a>
+      </li>
+      <li>
+        <a
+          (click)="router.navigate(['/about'])"
+          style="cursor: pointer"
+          [class.active]="isActive('/about')"
+          >About</a
+        >
+      </li>
+      <li>
+        <a
+          (click)="router.navigate(['/login'])"
+          style="cursor: pointer"
+          [class.active]="isActive('/login')"
+          >Login</a
+        >
+      </li>
+      <li>
+        <a
+          (click)="router.navigate(['/sign-up'])"
+          style="cursor: pointer"
+          [class.active]="isActive('/sign-up')"
+          >Sign Up</a
+        >
+      </li>
+    </ul>
+  </nav>
+</header>
