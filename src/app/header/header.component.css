@@ -5,18 +5,32 @@
   width: 100%;
   z-index: 100;
   background: none;
-  margin-top: 30px !important; /* добавьте отступ здесь */
+  display: flex;
+  justify-content: space-between; /* Распределяем пространство между лого и навигацией */
+  align-items: center;
+  padding: 10px 0px;
+}
+
+.logo {
+  height: 100px; /* Задайте желаемую высоту логотипа */
+}
+
+.app-header nav {
+  flex-grow: 1; /* Навигация занимает оставшееся пространство */
+  display: flex;
+  justify-content: flex-end; /* Выравниваем пункты меню вправо */
+  align-items: center;
 }
 
 .app-header nav ul {
   list-style: none;
   padding: 0;
-  margin: 0 auto;
+  margin: 0; /* Убираем отступы */
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-end; /* Выравниваем пункты меню вправо */
   align-items: center;
-  flex-wrap: wrap; /* Добавьте это свойство */
-  max-width: 90%;
+  flex-wrap: nowrap; /* Запрещаем перенос на новую строку */
+  max-width: none; /* Убираем ограничение по ширине */
   transition: transform 0.3s ease;
 }
 
@@ -77,7 +91,17 @@
 /* Для маленьких экранов (ширина менее 600px) */
 @media (max-width: 768px) {
   .app-header {
-    padding: 5px; /* Еще меньше padding */
+    padding: 5px;
+    flex-direction: column; /* Изменяем направление на колонку */
+    align-items: flex-start; /* Выравниваем элементы по левому краю */
+  }
+
+  .logo {
+    margin-bottom: 10px; /* Добавляем отступ снизу */
+  }
+
+  .app-header nav {
+    width: 100%; /* Навигация занимает всю ширину */
   }
 
   .app-header nav ul {
@@ -92,7 +116,7 @@
     transition: transform 0.3s ease;
     padding-top: 60px;
     box-shadow: -2px 0 5px rgba(0,0,0,0.1);
-    justify-content: center; /* Центрируем элементы на маленьких экранах */
+    justify-content: flex-start; /* Выравниваем элементы по верхнему краю */
   }
 
   .app-header nav ul.open {
@@ -100,15 +124,18 @@
   }
 
   .app-header nav ul li {
-    margin: 2px; /* Добавляем небольшой отступ между элементами */
+    margin: 2px;
   }
 
   .app-header nav ul li a {
-    padding: 4px 6px; /* Еще меньше padding для ссылок */
-    font-size: 0.8rem; /* Еще меньше font-size */
+    padding: 4px 6px;
+    font-size: 0.8rem;
   }
 
   .hamburger {
     display: block;
+    position: absolute;
+    top: 10px;
+    right: 10px;
   }
 }

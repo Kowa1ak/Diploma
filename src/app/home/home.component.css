@@ -1,44 +1,83 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background: white; /* Изменяем цвет фона на белый */
+}
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0; /* Помещаем canvas на задний план */
+    filter: blur(2px); /* Добавляем размытие */
+}
 .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+    position: relative;
+    color: black;
+    z-index: 1; /* Помещаем container поверх canvas */
+}
+h1 {
+    text-align: center;
+    font-size: 3em;
+    margin: 0;
+}
+.cursor {
+    animation: blink var(--cursor-blink-speed) step-end infinite;
+    border-radius: 50%;
+    width: 0.4em;
+    height: 0.4em;
+    display: inline-block;
+    background-color: black;
+    vertical-align: middle;
+    animation-timing-function: ease-in-out;
+}
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+.join-button {
+    margin-top: 20px;
+    padding: 10px 30px;
+    border: 1px solid black;
+    color: black;
+    background-color: transparent;
+    cursor: pointer;
+    border-radius: 25px;
+    font-size: 1.2em;
+    width: auto;
+    display: flex;
+    align-items: center;
+}
+.join-button mat-icon {
+    vertical-align: middle;
+    margin-left: 5px;
+}
+
+.benefit-cards {
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh; /* Занимает всю высоту экрана */
-}
-
-h1 {
-  text-align: center;
-  font-size: 3em;
-  margin: 0; /* Убираем стандартные отступы h1 */
-}
-
-.cursor {
-  animation: blink var(--cursor-blink-speed) step-end infinite;
-  border-radius: 50%; /* Делаем курсор кругом */
-  width: 0.4em; /* Уменьшаем размер */
-  height: 0.4em; /* Уменьшаем размер */
-  display: inline-block;
-  background-color: black; /* Цвет курсора */
-  vertical-align: middle; /* Выравниваем по вертикали */
-  animation-timing-function: ease-in-out;
-}
-
-@keyframes blink {
-  50% {
-    opacity: 0;
-  }
-}
-
-.join-button {
+  flex-wrap: wrap;
   margin-top: 20px;
-  padding: 10px 20px;
-  border: 2px solid black;
-  color: black;
-  background-color: white;
-  cursor: pointer;
-  border-radius: 5px;
-  font-size: 1.2em;
 }
 
-.arrow {
-  margin-left: 5px;
+.benefit-card {
+  width: 200px;
+  padding: 15px;
+  margin: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.benefit-icon {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 10px;
 }
