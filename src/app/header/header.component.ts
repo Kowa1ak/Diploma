@@ -1,4 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -9,19 +14,22 @@ import { RouterModule } from '@angular/router';
   imports: [CommonModule, RouterModule],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent implements OnInit {
   currentRoute: string = '';
-  menuOpen: boolean = false; // новое свойство для управления меню
+  menuOpen: boolean = false;
 
-  constructor(public router: Router) {}
+  constructor(public router: Router, private cdr: ChangeDetectorRef) {
+    this.currentRoute = this.router.url;
+  }
 
   ngOnInit() {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.currentRoute = event.url;
-        // Закрываем меню при навигации
         this.menuOpen = false;
+        this.cdr.markForCheck(); // trigger change detection on route change
       }
     });
   }
@@ -30,11 +38,12 @@ export class HeaderComponent implements OnInit {
     return this.currentRoute === route;
   }
 
-  isHomePage(): boolean {
-    return this.currentRoute === '/home' || this.currentRoute === '/';
-  }
-
   toggleMenu(): void {
     this.menuOpen = !this.menuOpen;
+  }
+
+  get isHomePage(): boolean {
+    // Use the updated currentRoute to determine if the current page is home
+    return this.currentRoute === '/home';
   }
 }

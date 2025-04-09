@@ -1,15 +1,38 @@
-<!-- Используйте # вместо id для ViewChild -->
-<canvas #parallaxCanvas></canvas>
+<div class="home-container">
+  <canvas #parallaxCanvas></canvas>
 
-<div class="container">
-  <h1>{{ typedText }}<span *ngIf="showCursor" class="cursor"></span></h1>
-  <button class="join-button">Join<mat-icon>arrow_forward</mat-icon></button>
+  <div class="container">
+    <h1>{{ typedText }}<span *ngIf="showCursor" class="cursor"></span></h1>
 
-  <div class="benefit-cards">
-    <div class="benefit-card" *ngFor="let card of benefitCards">
-      <img [src]="card.icon" alt="{{ card.title }}" class="benefit-icon" />
-      <h3>{{ card.title }}</h3>
-      <p>{{ card.description }}</p>
-    </div>
+    <ng-container *ngIf="!authService.isAuthenticated(); else authContent">
+      <button class="join-button custom-button" (click)="onJoinClick()">
+        Join<mat-icon>arrow_forward</mat-icon>
+      </button>
+
+      <div class="benefit-cards">
+        <div class="benefit-card" *ngFor="let card of benefitCards">
+          <img [src]="card.icon" alt="{{ card.title }}" class="benefit-icon" />
+          <h3>{{ card.title }}</h3>
+          <p>{{ card.description }}</p>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #authContent>
+      <div class="auth-buttons">
+        <button class="big-button" (click)="onNewProjectClick()">
+          New Project<mat-icon>add</mat-icon>
+        </button>
+        <button class="big-button">
+          Last Project <mat-icon>cached</mat-icon>
+        </button>
+        <button class="big-button">
+          All Projects <mat-icon>folder</mat-icon>
+        </button>
+        <button class="big-button">
+          Settings <mat-icon>settings</mat-icon>
+        </button>
+      </div>
+    </ng-template>
   </div>
 </div>

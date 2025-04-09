@@ -1,0 +1,281 @@
+:host {
+  display: flex;
+  box-sizing: border-box;  /* добавлено: padding теперь учитывается в 100vh */
+  justify-content: center;  /* центрирование по горизонтали */
+  align-items: center;      /* центрирование по вертикали */
+  min-height: 100vh;
+  padding: 20px;
+  overflow: hidden;         /* убираем прокрутку */
+}
+
+.new-project-container {
+  max-width: 600px;
+  width: 100%;
+  padding: 20px;
+  background: rgba(255, 255, 255, 1) !important;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  font-family: sans-serif;
+  border-radius: 20px;
+  overflow: hidden; /* для скрытия переполнения во время анимации */
+}
+
+
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-group {
+position: relative;
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+
+}
+
+label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+/* Минималистичные стили для текстовых полей и textarea */
+input[type="text"],
+textarea,
+select {
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 50px; /* полностью округлая граница */
+  font-size: 14px;
+  outline: none;
+  transition: border 0.2s ease;
+  /* background: rgba(255, 255, 255, 0.2) !important;
+  -webkit-backdrop-filter: blur(15px) !important;
+  backdrop-filter: blur(15px) !important; */
+}
+
+input[type="text"]:focus,
+textarea:focus {
+  border-bottom-color: #0f456e;
+}
+
+/* Фиксированная высота и отключение изменения размера для Description */
+textarea {
+  resize: none;
+  height: 80px;
+}
+
+.custom-textarea {
+  border-radius: 20px; /* другое закругление для этого поля */
+}
+
+/* Резервирование места для ошибок, чтобы форма не дергалась */
+.error {
+  min-height: 18px;
+  margin-top: 5px;
+}
+
+.error small {
+  color: red;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1; /* make sure this is lower than the dropdown's z-index (e.g., 1000) */
+}
+
+.radio-group label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* добавляем стиль для радио кнопок */
+.radio-group input[type="radio"] {
+  accent-color: black;
+}
+
+.button-group {
+  display: flex;
+  justify-content: flex-end; /* прижимает кнопки к одной стороне */
+  gap: 10px;
+  margin-top: 20px;
+}
+
+button[type="submit"],
+button[type="button"] {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 30px; /* изменяем округление кнопок */
+  cursor: pointer;
+}
+
+button[type="submit"] {
+  background-color: #000; /* чёрная кнопка */
+  color: #fff;
+}
+
+button[type="button"] {
+  background-color: transparent; /* прозрачный фон */
+  color: #000;
+  border: 1px solid #000; /* рамка для видимости */
+}
+
+.upload-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #f0f0f0;
+  cursor: pointer;
+}
+
+.upload-button mat-icon {
+  margin-right: 5px;
+}
+
+.file-name {
+  margin-top: 5px;
+  font-size: 14px;
+  color: #333;
+}
+
+.custom-dropdown {
+  position: relative; /* убедитесь, что это свойство присутствует */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 50px;
+  background: #fff;
+  cursor: pointer;
+  overflow: visible;
+  /* background: rgba(255, 255, 255, 0.5) !important;
+  -webkit-backdrop-filter: blur(25px) !important;
+  backdrop-filter: blur(25px) !important; */
+
+}
+
+.custom-dropdown mat-icon {
+  font-size: 20px;
+}
+
+/* Обновлённое оформление стрелки с анимацией */
+.icon {
+  font-size: 3rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  color: #000000;
+  transition: transform 0.6s ease;
+}
+.dropdown-icon.open {
+  transform: rotate(180deg);
+}
+
+/* Анимация выпадающего списка */
+.dropdown-options {
+  position: absolute; /* фиксируем относительно .custom-dropdown */
+  top: auto;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  margin-top: 25px;
+  background: #fff;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+.dropdown-options.open {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.dropdown-option {
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.dropdown-option:hover {
+  background: #f0f0f0;
+}
+
+.background-text {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;        /* полная высота экрана */
+  display: flex;
+  align-items: center;  /* вертикальное центрирование */
+  justify-content: center; /* горизонтальное центрирование */
+  text-align: center;
+  font-size: 13rem;  
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.1); /* полупрозрачный цвет */
+  pointer-events: none;
+  z-index: -3;
+  white-space: normal;         /* разрешаем перенос строк */
+  word-break: break-word;       /* разрыв длинных слов */
+  overflow-wrap: break-word; /* позволяет разрывать слово и переходить на новую строку */
+  line-height: 1.5; /* добавляем достаточное межстрочное расстояние чтобы строки не перекрывались */
+}
+
+.nav-buttons {
+  position: fixed;
+  bottom: 200px;
+  left: 40px;
+  right: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* выравнивание по вертикали */
+  z-index: 10;
+}
+
+.nav-button {
+  overflow: visible;
+  background: transparent;
+  border: none;
+  font-size: 3rem;
+  color: #DFDFDF;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.nav-button mat-icon {
+  color: #DFDFDF;
+  font-size: 2.5rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;    /* выравнивание иконки по центру */
+}
+
+@media (max-width: 1450px) {
+  .nav-buttons {
+    bottom: 100px;            /* кнопки спускаются ниже */
+    left: 0;
+    right: 0;
+    /* justify-content: center;
+    align-items: center;
+    flex-direction: row; */
+    transform: translateY(50px); /* перемещаем кнопки вниз через translateY */
+  }
+  .nav-button {
+    margin: 5px 0;            /* добавляем вертикальные отступы между кнопками */
+  }
+}
+
+
+

@@ -1,10 +1,16 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewEncapsulation,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
   encapsulation: ViewEncapsulation.None, // Disable view encapsulation
+  changeDetection: ChangeDetectionStrategy.OnPush, // добавлено
 })
 export class LoginComponent implements OnInit {
   constructor() {}
@@ -13,8 +19,5 @@ export class LoginComponent implements OnInit {
     // Initialization logic here
   }
 
-  login() {
-    // Add login logic here
-    console.log('Login function called');
-  }
+  login() {}
 }

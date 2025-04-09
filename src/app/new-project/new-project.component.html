@@ -1,0 +1,174 @@
+<div class="background-text">CREATE PROJECT</div>
+<div class="nav-buttons">
+  <button routerLink="/home" class="nav-button home">
+    <mat-icon class="icon">arrow_back</mat-icon>
+    Home
+  </button>
+  <button routerLink="/recent-project" class="nav-button recent">
+    Recent Project
+    <mat-icon class="icon">arrow_forward</mat-icon>
+  </button>
+</div>
+<div
+  class="new-project-container"
+  #container
+  [@expandCollapse]="containerState"
+>
+  <h2>FORM</h2>
+  <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="projectName">Project Name <span>*</span></label>
+      <input
+        type="text"
+        id="projectName"
+        formControlName="projectName"
+        placeholder="e.g., My Awesome Web App"
+      />
+      <div
+        class="error"
+        *ngIf="
+          projectForm.get('projectName')?.touched &&
+          projectForm.get('projectName')?.invalid
+        "
+      >
+        <small *ngIf="projectForm.get('projectName')?.errors?.['required']"
+          >Project Name is required.</small
+        >
+        <small *ngIf="projectForm.get('projectName')?.errors?.['maxlength']"
+          >Maximum 100 characters allowed.</small
+        >
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description (Optional)</label>
+      <textarea
+        id="description"
+        formControlName="description"
+        class="custom-textarea"
+        placeholder="e.g., Generate test cases for the authentication module."
+      ></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="primaryLanguage"
+        >Primary Programming Language <span>*</span></label
+      >
+      <div class="custom-dropdown" (click)="toggleLanguageOptions($event)">
+        <span *ngIf="!projectForm.get('primaryLanguage')?.value"
+          >Select a language</span
+        >
+        <span *ngIf="projectForm.get('primaryLanguage')?.value">
+          {{ projectForm.get("primaryLanguage")?.value }}
+        </span>
+        <mat-icon class="icon" [class.open]="showLanguageOptions"
+          >arrow_downward</mat-icon
+        >
+      </div>
+      <div
+        class="dropdown-options"
+        [class.open]="showLanguageOptions"
+        *ngIf="showLanguageOptions"
+      >
+        <div
+          class="dropdown-option"
+          *ngFor="let lang of programmingLanguages"
+          (click)="selectLanguage(lang); $event.stopPropagation()"
+        >
+          {{ lang }}
+        </div>
+      </div>
+      <div
+        class="error"
+        *ngIf="
+          projectForm.get('primaryLanguage')?.touched &&
+          projectForm.get('primaryLanguage')?.invalid
+        "
+      >
+        <small *ngIf="projectForm.get('primaryLanguage')?.errors?.['required']">
+          Primary Programming Language is required.
+        </small>
+      </div>
+    </div>
+
+    <div class="form-group group-option">
+      <label>How will you provide the source code? <span>*</span></label>
+      <div class="radio-group">
+        <label *ngFor="let method of sourceCodeMethods">
+          <input
+            type="radio"
+            formControlName="sourceCodeMethod"
+            [value]="method.value"
+          />
+          {{ method.label }}
+        </label>
+      </div>
+      <div
+        class="error"
+        *ngIf="
+          projectForm.get('sourceCodeMethod')?.touched &&
+          projectForm.get('sourceCodeMethod')?.invalid
+        "
+      >
+        <small *ngIf="projectForm.get('sourceCodeMethod')?.errors?.['required']"
+          >This field is required.</small
+        >
+      </div>
+    </div>
+
+    <div
+      class="form-group"
+      *ngIf="projectForm.get('sourceCodeMethod')?.value === 'git'"
+    >
+      <label for="gitUrl">Git Repository URL <span>*</span></label>
+      <input
+        type="text"
+        id="gitUrl"
+        formControlName="gitUrl"
+        placeholder="e.g., https://github.com/username/repo.git"
+      />
+      <div
+        class="error"
+        *ngIf="
+          projectForm.get('gitUrl')?.touched &&
+          projectForm.get('gitUrl')?.invalid
+        "
+      >
+        <small *ngIf="projectForm.get('gitUrl')?.errors?.['required']"
+          >Git Repository URL is required.</small
+        >
+      </div>
+    </div>
+
+    <div
+      class="form-group"
+      *ngIf="projectForm.get('sourceCodeMethod')?.value === 'upload'"
+    >
+      <label>Upload Code Archive (.zip, .tar.gz) <span>*</span></label>
+      <label class="upload-button">
+        <mat-icon>file_upload</mat-icon> Choose File
+        <input
+          type="file"
+          (change)="onFileSelected($event)"
+          accept=".zip,.tar.gz"
+          hidden
+        />
+      </label>
+      <div class="file-name" *ngIf="selectedFileName">
+        {{ selectedFileName }}
+      </div>
+      <div class="error" *ngIf="uploadError">
+        <small>{{ uploadError }}</small>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button type="button" (click)="onCancel()">Cancel</button>
+      <button type="submit" [disabled]="projectForm.invalid">
+        Create Project
+      </button>
+    </div>
+
+    <div class="server-error" *ngIf="formError">{{ formError }}</div>
+  </form>
+</div>

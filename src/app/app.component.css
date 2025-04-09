@@ -20,3 +20,10 @@ router-outlet {
   flex: 1; /*  */
   overflow-y: auto; /* Добавьте это свойство, чтобы контент мог прокручиваться внутри router-outlet */
 }
+
+/* Добавляем отступ для основного контента, чтобы header не перекрывал его */
+.content-wrapper {
+  padding-top: 60px; /* должен соответствовать реальной высоте header */
+  width: 100%;
+  box-sizing: border-box;
+}

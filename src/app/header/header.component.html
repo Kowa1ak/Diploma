@@ -1,13 +1,7 @@
 <header class="app-header">
-  <img src="../../assets/logo/logo3.png" alt="Logo" class="logo" />
-  <button class="hamburger" (click)="toggleMenu()" [class.active]="menuOpen">
-    <span></span>
-    <span></span>
-    <span></span>
-  </button>
   <nav>
     <ul [class.open]="menuOpen">
-      <li *ngIf="!isHomePage()">
+      <li *ngIf="!isHomePage">
         <a (click)="router.navigate(['/home'])" style="cursor: pointer">Home</a>
       </li>
       <li>
@@ -36,4 +30,9 @@
       </li>
     </ul>
   </nav>
+  <button class="hamburger" (click)="toggleMenu()" [class.active]="menuOpen">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
 </header>
