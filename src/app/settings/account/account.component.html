@@ -1,0 +1,96 @@
+<div class="account-card">
+  <div class="card-header">
+    <mat-icon class="avatar" style="font-size: 100px">person</mat-icon>
+  </div>
+  <div class="card-body">
+    <div class="field-group">
+      <label>Username</label>
+      <div class="field-wrapper">
+        <input type="text" [(ngModel)]="username" [disabled]="!editUsername" />
+        <!-- Если не в режиме редактирования, показываем карандаш -->
+        <button
+          type="button"
+          class="icon-button"
+          *ngIf="!editUsername"
+          (click)="editUsername = true"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+        <!-- Если в режиме редактирования, показываем галку -->
+        <button
+          type="button"
+          class="icon-button"
+          *ngIf="editUsername"
+          (click)="saveUsername()"
+        >
+          <mat-icon>check</mat-icon>
+        </button>
+      </div>
+    </div>
+    <div class="field-group">
+      <label>Email</label>
+      <div class="field-wrapper">
+        <input type="email" [(ngModel)]="email" [disabled]="!editEmail" />
+        <button
+          type="button"
+          class="icon-button"
+          *ngIf="!editEmail"
+          (click)="editEmail = true"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button
+          type="button"
+          class="icon-button"
+          *ngIf="editEmail"
+          (click)="saveEmail()"
+        >
+          <mat-icon>check</mat-icon>
+        </button>
+      </div>
+    </div>
+    <button
+      type="button"
+      class="change-password-button icon-button"
+      [ngClass]="{ active: showChangePassword }"
+      (click)="toggleChangePassword()"
+    >
+      <ng-container *ngIf="!showChangePassword; else activeIcon">
+        <mat-icon>lock_outline</mat-icon>
+        <span>Change Password</span>
+      </ng-container>
+      <ng-template #activeIcon>
+        <mat-icon>check</mat-icon>
+        <span>Confirm</span>
+      </ng-template>
+    </button>
+    <div class="field-group change-password-group">
+      <div class="change-password-fields" *ngIf="showChangePassword">
+        <div class="form-group">
+          <label>New Password</label>
+          <input
+            type="password"
+            placeholder="New Password"
+            [(ngModel)]="newPassword"
+          />
+        </div>
+        <div class="form-group">
+          <label>Confirm New Password</label>
+          <input
+            type="password"
+            placeholder="Confirm New Password"
+            [(ngModel)]="confirmNewPassword"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer">
+    <button type="button" class="logout-button" (click)="logout()">
+      <mat-icon>exit_to_app</mat-icon> Logout
+    </button>
+  </div>
+  <div class="change-password-form" *ngIf="false">
+    <!-- Удалён старый блок change password -->
+  </div>
+</div>

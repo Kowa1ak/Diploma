@@ -1,0 +1,35 @@
+<div class="settings-container">
+  <div class="background-text">SETTINGS</div>
+  <div class="nav-buttons">
+    <button routerLink="/all-project" class="nav-button all">
+      <mat-icon class="icon">arrow_back</mat-icon>
+      All Project
+    </button>
+    <button routerLink="/home" class="nav-button home">
+      Home
+      <mat-icon class="icon">arrow_forward</mat-icon>
+    </button>
+  </div>
+  <div class="tabs" #tabsElement>
+    <button
+      (click)="selectTab('global')"
+      [ngClass]="{ 'active-tab': selectedTab === 'global' }"
+    >
+      Global
+    </button>
+    <button
+      (click)="selectTab('account')"
+      [ngClass]="{ 'active-tab': selectedTab === 'account' }"
+    >
+      Account
+    </button>
+  </div>
+  <div
+    class="tab-content"
+    [ngClass]="{ 'account-active': selectedTab === 'account' }"
+    #tabContent
+  >
+    <app-global *ngIf="selectedTab === 'global'"></app-global>
+    <app-account *ngIf="selectedTab === 'account'"></app-account>
+  </div>
+</div>

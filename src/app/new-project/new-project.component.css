@@ -100,7 +100,7 @@ textarea {
   display: flex;
   justify-content: flex-end; /* прижимает кнопки к одной стороне */
   gap: 10px;
-  margin-top: 20px;
+  margin-top: 40px;
 }
 
 button[type="submit"],
@@ -190,7 +190,7 @@ button[type="button"] {
   max-height: 200px;
   overflow-y: auto;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-  z-index: 2;
+  z-index: 6;
   opacity: 0;
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
@@ -238,11 +238,12 @@ button[type="button"] {
   display: flex;
   justify-content: space-between;
   align-items: center; /* выравнивание по вертикали */
-  z-index: 10;
+  z-index: 5;
 }
 
 .nav-button {
   overflow: visible;
+  cursor: pointer;
   background: transparent;
   border: none;
   font-size: 3rem;

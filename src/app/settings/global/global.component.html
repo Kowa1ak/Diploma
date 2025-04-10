@@ -1,0 +1,169 @@
+<div class="global-content">
+  <div class="global-columns" style="flex-direction: column; gap: 20px">
+    <!-- Preferences Section -->
+    <section class="section preferences">
+      <h2>Preferences</h2>
+      <div class="form-group">
+        <label for="testCaseFormat">Default Test Case Format</label>
+        <div class="button-group formats">
+          <button
+            type="button"
+            [ngClass]="{ selected: selectedTestCaseFormat === 'Gherkin' }"
+            (click)="selectedTestCaseFormat = 'Gherkin'"
+          >
+            Gherkin
+          </button>
+          <button
+            type="button"
+            [ngClass]="{ selected: selectedTestCaseFormat === 'CSV' }"
+            (click)="selectedTestCaseFormat = 'CSV'"
+          >
+            CSV
+          </button>
+          <button
+            type="button"
+            [ngClass]="{ selected: selectedTestCaseFormat === 'JSON' }"
+            (click)="selectedTestCaseFormat = 'JSON'"
+          >
+            JSON
+          </button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Notifications</label>
+        <div class="switch-group">
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="notifyOnComplete" />
+            <span class="slider"></span>
+          </label>
+          <span class="switch-label">Generation Complete</span>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="notifyOnFailed" />
+            <span class="slider"></span>
+          </label>
+          <span class="switch-label">Generation Failed</span>
+        </div>
+      </div>
+    </section>
+    <!-- API Keys Section -->
+    <section class="section api-keys">
+      <h2>API Keys</h2>
+      <div class="api-key-list">
+        <!-- Default API Key -->
+        <div
+          class="api-key-item"
+          [ngClass]="{ 'active-key': activeApi === 'default' }"
+          (click)="selectActiveApi('default')"
+        >
+          <span class="key-label">Default API Key:</span>
+          <span class="key-value">{{ defaultApiKey }}</span>
+          <div class="action-buttons" style="display: flex; gap: 10px">
+            <button
+              class="check-button"
+              *ngIf="customApiKey"
+              [ngClass]="{ filled: activeApi === 'default' }"
+              (click)="selectActiveApi('default'); $event.stopPropagation()"
+            >
+              <mat-icon *ngIf="activeApi === 'default'">check</mat-icon>
+            </button>
+            <button
+              class="regenerate-button"
+              (click)="regenerateDefaultKey(); $event.stopPropagation()"
+            >
+              <mat-icon>autorenew</mat-icon>
+            </button>
+          </div>
+        </div>
+        <!-- Custom API Key -->
+        <div
+          class="api-key-item"
+          *ngIf="customApiKey"
+          [ngClass]="{ 'active-key': activeApi === 'custom' }"
+          (click)="selectActiveApi('custom')"
+        >
+          <span class="key-label">Custom API Key:</span>
+          <span class="key-value">{{ maskedCustomKey }}</span>
+          <div class="action-buttons" style="display: flex; gap: 10px">
+            <button
+              class="check-button"
+              [ngClass]="{ filled: activeApi === 'custom' }"
+              (click)="selectActiveApi('custom'); $event.stopPropagation()"
+            >
+              <mat-icon *ngIf="activeApi === 'custom'">check</mat-icon>
+            </button>
+            <button
+              class="bin-button"
+              (click)="removeCustomKey(); $event.stopPropagation()"
+            >
+              <svg
+                class="bin-top"
+                viewBox="0 0 39 7"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <line
+                  y1="5"
+                  x2="39"
+                  y2="5"
+                  stroke="white"
+                  stroke-width="4"
+                ></line>
+                <line
+                  x1="12"
+                  y1="1.5"
+                  x2="26.0357"
+                  y2="1.5"
+                  stroke="white"
+                  stroke-width="3"
+                ></line>
+              </svg>
+              <svg
+                class="bin-bottom"
+                viewBox="0 0 33 39"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <mask id="path-1-inside-1_8_19" fill="white">
+                  <path
+                    d="M0 0H33V35C33 37.2091 31.2091 39 29 39H4C1.79086 39 0 37.2091 0 35V0Z"
+                  ></path>
+                </mask>
+                <path
+                  d="M0 0H33H0ZM37 35C37 39.4183 33.4183 43 29 43H4C-0.418278 43 -4 39.4183 -4 35H4H29H37ZM4 43C-0.418278 43 -4 39.4183 -4 35V0H4V35V43ZM37 0V35C37 39.4183 33.4183 43 29 43V35V0H37Z"
+                  fill="white"
+                  mask="url(#path-1-inside-1_8_19)"
+                ></path>
+                <path d="M12 6L12 29" stroke="white" stroke-width="4"></path>
+                <path d="M21 6V29" stroke="white" stroke-width="4"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Если кастомного ключа нет, показываем кнопку Insert API Key -->
+      <div class="api-buttons" *ngIf="!customApiKey">
+        <button class="insert-button" (click)="openInsertModal()">
+          Insert API Key
+        </button>
+      </div>
+    </section>
+  </div>
+  <!-- Modal for inserting a custom API key -->
+  <div class="modal-overlay" *ngIf="showInsertModal">
+    <div class="modal">
+      <h2>Insert API Key</h2>
+      <input
+        type="text"
+        [(ngModel)]="insertedApiKey"
+        placeholder="Paste your API key here"
+        class="modal-input"
+      />
+      <div class="modal-buttons">
+        <button class="modal-button cancel" (click)="cancelInsert()">
+          Cancel
+        </button>
+        <button class="modal-button save" (click)="saveInsert()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>

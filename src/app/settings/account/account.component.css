@@ -1,0 +1,203 @@
+/* Добавьте стили для account секции или оставьте пустым для плейсхолдера */
+.account-content {
+  padding: 20px;
+}
+
+.account-card {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  text-align: center;  /* добавлено для центрирования иконки */
+  padding: 20px;
+}
+
+.avatar {
+  font-size: 100px !important;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.field-group {
+  margin-bottom: 15px;
+}
+
+.field-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.field-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.field-wrapper input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 8px;
+  color: #555;
+}
+
+.icon-button mat-icon {
+  vertical-align: middle;
+}
+
+.card-footer {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  text-align: right;
+}
+
+.logout-button {
+  background: transparent; /* прозрачный фон */
+  padding: 10px;
+  border: 1px solid transparent; /* установлено изначально, чтобы избежать смещения */
+  border-radius: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.logout-button:hover {
+  border-color: #000; /* меняется только цвет, размеры остаются прежними */
+}
+
+.logout-button mat-icon {
+  color: #000; /* иконка черная */
+}
+
+.change-password-form {
+  padding: 20px;
+  background: #fafafa;
+  border-top: 1px solid #eee;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 15px;
+}
+
+.form-actions .icon-button {
+  padding: 8px 12px;
+  background: #000000;
+  color: #fff;
+  border-radius: 4px;
+}
+
+.form-actions .icon-button:hover {
+  background: #000000;
+}
+
+/* Новые стили для смены пароля */
+.change-password-group {
+  display: flex;
+  flex-direction: column;
+  margin-top: 55px; /* увеличен отступ от основных полей */
+  position: relative;
+  width: 100%; /* растягивается на всю ширину родительского блока */
+}
+
+/* Изменённые стили для фиксированной кнопки смены пароля с абсолютным позиционированием */
+.change-password-button {
+  position: absolute;
+  left: 0;
+  width: 170px; /* фиксированная ширина */
+  border: 1px solid #000000;
+  padding: 5px 10px;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  transition: left 0.3s ease, background 0.3s ease, color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  margin-left: 20px;
+}
+
+.change-password-button.active {
+  left: calc(100% - 210px); /* кнопка прижимается к правому краю родителя */
+  background: #000;        /* черный фон */
+  color: #fff;             /* белый текст */
+  border-color: #000;       /* граница черного цвета */
+}
+
+.change-password-button.active mat-icon {
+  margin-right: 8px;
+  color: #fff;             /* белая иконка */
+}
+
+.change-password-button mat-icon {
+  margin-right: 8px;
+}
+
+.change-password-fields {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box; /* добавлено для учета внутренних отступов */
+}
+
+.change-password-fields input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box; /* гарантирует, что ширина не выйдет за рамки контейнера */
+}
+
+.change-password-fields .form-group:last-child {
+  margin: 0;
+}
+
+/* Убираем нижний отступ для всех form-group внутри change-password-fields */
+.change-password-fields .form-group {
+  margin-bottom: 0 !important;
+}
