@@ -1,0 +1,464 @@
+/* Стили для пагинации */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  font-size: 1rem;
+}
+
+.pagination-icon {
+  cursor: pointer;
+  color: #000;
+  font-size: 2rem;
+  width: 35px;
+  height: 35px;
+  margin-left: 5px;
+}
+
+.pagination-icon.disabled {
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+/* Выравнивание иконок на одной линии с текстом */
+mat-icon {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
+/* Добавляем стили для обёртывающего контейнера, чтобы он центрировал содержимое */
+.outer-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Новый блок-обёртка для основного контента и панели фильтров */
+.content-wrapper {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  max-width: 1400px;
+  align-items: stretch; /* дети одинаковой высоты */
+  transition: all 0.5s ease-in-out;
+}
+
+/* Основной блок с таблицей занимает оставшуюся ширину */
+.all-project-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  background: #fff;
+  /* обновлённая ширина: отнимаем ширину фильтра + отступ */
+  width: calc(100% - 320px);
+  padding: 20px;
+  height: auto;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.5s ease-in-out;
+  z-index: 10;
+}
+.header-section,
+.header-actions {
+  width: 100%; /* дочерние элементы теперь растягиваются на всю ширину контейнера */
+}
+
+/* Увеличиваем нижний отступ header для разделения с таблицей */
+.header-section {
+  margin-bottom: 30px !important;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+  margin: 10px auto 0 auto !important;
+  width: 100%;
+}
+
+.new-project-button {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  padding: 0px 20px;
+  background: transparent;
+  border: 1px solid #000000;
+  border-radius: 20px;
+}
+
+.new-project-button mat-icon {
+  font-size: 20px;
+  vertical-align: middle;
+}
+
+.project-search {
+  padding: 10px;
+  font-size: 1.2rem;
+  border: 1px solid #000000;
+  border-radius: 20px;
+  background: transparent;
+  width: 100%; /* растягивает инпут на всю ширину контейнера */
+  flex: 1;    /* растягивается на оставшуюся ширину */
+}
+
+.sort-button {
+  border: 1px solid #000000;
+  width: 5%;
+  border-radius: 10px;
+  background: transparent;
+  flex: 0 0 auto;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end; /* прижимаем кнопки к правому краю */
+  gap: 5px;
+}
+
+.action-button {
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition: background 0.3s ease, opacity 0.3s ease;
+}
+
+.action-button.settings {
+  background: #0F456E;
+  color: #fff;
+}
+
+.action-button.delete {
+  background: #D9534F;
+  color: #fff;
+}
+
+.action-button:hover {
+  opacity: 0.8;
+}
+
+.project-list table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px; /* интервал между строками для скругления */
+}
+
+/* Центрируем содержимое всех ячеек таблицы */
+.project-list td {
+  text-align: center;
+  padding: 15px; /* отступы в ячейках */
+}
+
+/* Оставляем выравнивание по леву для столбца Discription (вторая ячейка каждой строки) */
+.project-row td:nth-child(2) {
+  text-align: left;
+}
+
+.project-row {
+  border-radius: 10px;
+  overflow: hidden;
+  /* заменяем одностороннюю тень на две: снизу и сверху */
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.1), 0 -2px 7px rgba(0, 0, 0, 0.1);
+}
+
+/* Закругление у первой и последней ячейки строки */
+.project-row td:first-child {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.project-row td:last-child {
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  text-align: center; /* центрируем содержимое ячейки Action */
+}
+
+/* Убираем обводку и лишние отступы у кнопки Action */
+.delete-button {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  color: #D9534F;
+  transition: opacity 0.3s ease;
+}
+
+/* Фильтр-модуль с растянутыми элементами */
+.filter-panel {
+  flex: 0 0 150px;
+  position: relative;
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.5s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  z-index: 9;
+  min-height: 300px; /* добавлено для фиксации высоты модуля */
+}
+
+/* Новый заголовок фильтров */
+.filter-header {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+/* Блок с кнопками фильтрации растягивается на всю ширину */
+.filter-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+/* Кнопки порядка в ряд, каждая занимает половину ширины */
+.order-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+}
+
+.order-button {
+  width: 48%;
+  padding: 8px;
+  border: 1px solid #000;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.order-button mat-icon {
+  display: flex;
+  align-items: center; 
+  justify-content: center; 
+  text-align: center;
+  font-size: 16px;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  transition: color 0.3s ease;
+}
+
+.order-button:active,
+.order-button.active {
+  background: #000;
+}
+
+.order-button:active mat-icon,
+.order-button.active mat-icon {
+  color: #fff;
+}
+
+/* Блок с кнопками сортировки (Date / Alphabetical) */
+.sort-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.sort-filter {
+  padding: 10px;
+  border: 1px solid #000;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  width: 100%;
+  text-align: center;
+}
+
+.sort-filter:hover {
+  background: #f0f0f0;
+}
+
+.sort-filter.active {
+  background: #000;
+  color: #fff;
+}
+
+/* Кнопка переключения между Date / Alphabetical */
+.toggle-sort {
+  padding: 10px;
+  border: 1px solid #000;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  width: 100%;
+}
+
+.toggle-sort:hover {
+  background: #f0f0f0;
+}
+
+/* Кнопка Clear прижатая книзу модуля */
+.clear-wrapper {
+  margin-top: auto; /* прижимает кнопку Clear к низу */
+  width: 100%;
+  text-align: center;
+}
+
+.clear-button {
+  padding: 5px;
+  border: 1px solid #D9534F;
+  border-radius: 10px;
+  background: transparent;
+  color: #D9534F;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  width: 100%;
+  /* Добавлено для выравнивания иконки с текстом */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.clear-button mat-icon {
+  font-size: 20px;
+  vertical-align: middle;
+}
+
+.clear-button:hover {
+  background: #f8d7da;
+}
+
+/* Фон с надписью */
+.background-text {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;        /* полная высота экрана */
+  display: flex;
+  align-items: center;  /* вертикальное центрирование */
+  justify-content: center; /* горизонтальное центрирование */
+  text-align: center;
+  font-size: 15rem;  
+  letter-spacing: 5px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.1); /* полупрозрачный цвет */
+  pointer-events: none;
+  z-index: -3;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.5;
+}
+
+/* Кнопки навигации */
+.nav-buttons {
+  position: fixed;
+  bottom: 200px;
+  left: 40px;
+  right: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* выравнивание по вертикали */
+  z-index: 5;
+  transform: translateY(120px);
+}
+
+.nav-button {
+  overflow: visible;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  font-size: 3rem;
+  color: #DFDFDF;
+  display: flex;
+  align-items: center;
+}
+
+.nav-button mat-icon {
+  color: #DFDFDF;
+  font-size: 2.5rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+}
+
+@media (max-width: 1450px) {
+  .nav-buttons {
+    bottom: 100px;            
+    left: 0;
+    right: 0;
+    transform: translateY(50px);
+  }
+  .nav-button {
+    margin: 5px 0;
+  }
+}
+
+/* Стили для отображения статуса */
+.project-list td .status-box {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  color: #fff;
+  width: 80px; /* Фиксированная ширина для всех статусов */
+  text-align: center; /* Выравнивание текста по центру */
+}
+
+.project-list td .status-box.Active {
+  background-color: #a5d6a7; /* Светло-зеленый */
+  color: #2e7d32; /* Темно-зеленый текст */
+}
+
+.project-list td .status-box.Completed {
+  background-color: #bdbdbd; /* Светло-серый */
+  color: #424242; /* Темно-серый текст */
+}
+
+.project-list td .status-box.Paused {
+  background-color: #ffe082; /* Светло-желтый */
+  color: #f9a825; /* Темно-желтый текст */
+}
+
+/* Стили для группы фильтров по статусу */
+.status-filters {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px; /* Отступ как у других фильтров */
+  flex-wrap: nowrap; /* Запрещаем перенос на новую строку */
+  justify-content: flex-start; /* Выравниваем по левому краю */
+}
+
+.status-button {
+  padding: 8px 12px;
+  border: 1px solid #000;
+  border-radius: 5px;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease;
+  font-size: 0.9rem; /* Уменьшаем размер шрифта */
+}
+
+.status-button:hover {
+  background: #f0f0f0;
+}
+
+.status-button.active {
+  background: #000;
+  color: #fff;
+}

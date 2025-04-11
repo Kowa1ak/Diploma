@@ -4,6 +4,7 @@ import { SignUpComponent } from './sign-up/sign-up.component';
 import { HomeComponent } from './home/home.component';
 import { NewProjectComponent } from './new-project/new-project.component';
 import { SettingsComponent } from './settings/settings.component';
+import { AllProjectComponent } from './all-project/all-project.component'; // добавлено
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -17,5 +18,6 @@ export const routes: Routes = [
   },
   { path: 'login', component: LoginComponent },
   { path: 'sign-up', component: SignUpComponent },
+  { path: 'all-project', component: AllProjectComponent }, // новый маршрут
   { path: '**', redirectTo: 'home' },
 ];

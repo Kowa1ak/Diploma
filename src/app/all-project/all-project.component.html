@@ -1,0 +1,165 @@
+<div class="outer-wrapper">
+  <div class="content-wrapper">
+    <!-- Фильтр-модуль всегда виден, располагается слева -->
+    <div class="filter-panel">
+      <h3 class="filter-header">Filters</h3>
+      <div class="filter-buttons">
+        <div class="order-buttons">
+          <button
+            class="order-button ascending"
+            (click)="onOrder('asc')"
+            [class.active]="selectedOrder === 'asc'"
+          >
+            <mat-icon>arrow_upward</mat-icon>
+          </button>
+          <button
+            class="order-button descending"
+            (click)="onOrder('desc')"
+            [class.active]="selectedOrder === 'desc'"
+          >
+            <mat-icon>arrow_downward</mat-icon>
+          </button>
+        </div>
+        <div class="sort-options">
+          <button
+            class="sort-filter date-filter"
+            (click)="onSort('date')"
+            [class.active]="selectedSort === 'date'"
+          >
+            Date
+          </button>
+          <button
+            class="sort-filter alphabetical-filter"
+            (click)="onSort('alphabetical')"
+            [class.active]="selectedSort === 'alphabetical'"
+          >
+            Alphabetical
+          </button>
+        </div>
+      </div>
+      <div class="status-filters">
+        <button
+          class="status-button active"
+          (click)="onStatusFilter('')"
+          [class.active]="selectedStatus === ''"
+        >
+          All
+        </button>
+        <button
+          class="status-button active"
+          (click)="onStatusFilter(ProjectStatus.Active)"
+          [class.active]="selectedStatus === ProjectStatus.Active"
+        >
+          Active
+        </button>
+        <button
+          class="status-button completed"
+          (click)="onStatusFilter(ProjectStatus.Completed)"
+          [class.active]="selectedStatus === ProjectStatus.Completed"
+        >
+          Completed
+        </button>
+        <button
+          class="status-button paused"
+          (click)="onStatusFilter(ProjectStatus.Paused)"
+          [class.active]="selectedStatus === ProjectStatus.Paused"
+        >
+          Paused
+        </button>
+      </div>
+      <div class="clear-wrapper" *ngIf="showClear">
+        <button class="clear-button" (click)="clearFilters()">
+          <mat-icon>close</mat-icon> Clear
+        </button>
+      </div>
+    </div>
+    <!-- Основной блок с таблицей -->
+    <div class="all-project-container">
+      <div class="header-section">
+        <div class="header-actions">
+          <button class="new-project-button" routerLink="/new-project">
+            <mat-icon>add</mat-icon> New Project
+          </button>
+          <input
+            type="search"
+            placeholder="Search projects by name..."
+            class="project-search"
+            (input)="onSearch($event)"
+          />
+          <!-- Кнопка фильтра удалена -->
+        </div>
+      </div>
+      <!-- Новый блок: Список проектов -->
+      <div class="project-list">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Status</th>
+              <!-- Новый столбец -->
+              <th>Last Changes</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngIf="displayedProjects.length; else noResults">
+              <tr *ngFor="let project of displayedProjects" class="project-row">
+                <td>{{ project.name }}</td>
+                <td>{{ project.description | slice : 0 : 50 }}...</td>
+                <!-- Обрезаем description -->
+                <td>
+                  <span class="status-box" [class]="project.status">
+                    {{ project.status }}
+                  </span>
+                </td>
+                <!-- Новая ячейка -->
+                <td>{{ project.lastModified | date : "dd.MM.yyyy, HH:mm" }}</td>
+                <td>
+                  <button
+                    class="delete-button"
+                    (click)="onDeleteProject(project)"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-template #noResults>
+              <tr>
+                <td colspan="5" class="no-result">No result...</td>
+              </tr>
+            </ng-template>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <mat-icon
+          class="pagination-icon"
+          (click)="previousPage()"
+          [class.disabled]="currentPage === 1"
+          >arrow_back</mat-icon
+        >
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <mat-icon
+          class="pagination-icon"
+          (click)="nextPage()"
+          [class.disabled]="currentPage === totalPages"
+          >arrow_forward</mat-icon
+        >
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Добавляем фон и кнопки навигации -->
+<div class="background-text">ALL PROJECTS</div>
+<div class="nav-buttons">
+  <button routerLink="/recent-project" class="nav-button recent">
+    <mat-icon class="icon">arrow_back</mat-icon>
+    Recent Project
+  </button>
+  <button routerLink="/settings" class="nav-button settings">
+    Settings
+    <mat-icon class="icon">arrow_forward</mat-icon>
+  </button>
+</div>
