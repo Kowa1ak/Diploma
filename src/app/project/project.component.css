@@ -1,0 +1,391 @@
+.project-container {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+/* Project Header */
+.project-header {
+  margin-bottom: 30px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.project-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+
+/* ... общие стили, которые могут быть нужны во всех вложенных компонентах ... */
+
+/* Tab Content */
+.tab-content {
+  padding: 20px 20px;
+}
+
+::ng-deep .mat-tab-body-wrapper {
+  height: auto !important; /* Позволяет содержимому вкладки определять высоту */
+  min-height: 300px; /* Минимальная высота для контента */
+  overflow: visible !important; /* Отключаем скролл */
+}
+
+h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+h3 {
+  font-size: 1.4rem;
+  color: #444;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 20px; /* Изменено с 8px на 20px */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); /* Изменено для равномерной тени со всех сторон */
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+/* Forms and Controls */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #f9f9f9;
+  font-size: 1rem;
+}
+
+.form-actions {
+  margin-top: 20px;
+}
+
+/* Buttons */
+.action-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background: #f0f0f0;
+  color: #333;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.action-button mat-icon {
+  margin-right: 5px;
+  font-size: 18px;
+}
+
+.action-button.primary {
+  background: #0077cc;
+  color: white;
+}
+
+.action-button.danger {
+  background: #e53935;
+  color: white;
+}
+
+.action-button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.icon-button {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.icon-button:hover {
+  background: #f0f0f0;
+}
+
+/* Dashboard */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.summary-item {
+  padding: 10px 0;
+}
+
+.summary-item .label {
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.summary-item .value {
+  color: #333;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+th {
+  background: #f7f7f7;
+  font-weight: 600;
+  color: #333;
+}
+
+.actions {
+  display: flex;
+  gap: 5px;
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.status-badge.completed {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-badge.failed {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.status-badge.in-progress {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+/* Test cases */
+.test-case-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.control-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.search-box {
+  position: relative;
+  flex: 1;
+}
+
+.search-box input {
+  padding-left: 35px;
+}
+
+.search-box mat-icon {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+
+.filter-group {
+  display: flex;
+  gap: 10px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 6px;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.badge.positive {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.badge.negative {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.badge.boundary {
+  background: #fff8e1;
+  color: #f57f17;
+}
+
+.badge.security {
+  background: #e8eaf6;
+  color: #3949ab;
+}
+
+.badge.performance {
+  background: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.priority {
+  display: inline-block;
+  padding: 3px 6px;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.priority.priority-high {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.priority.priority-medium {
+  background: #fff8e1;
+  color: #f57f17;
+}
+
+.priority.priority-low {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status {
+  display: inline-block;
+  padding: 3px 6px;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status.status-new {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.status.status-reviewed {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status.status-needs-revision {
+  background: #fff8e1;
+  color: #f57f17;
+}
+
+.test-name {
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Settings */
+.danger-zone {
+  background: #fdeded;
+  border-left: 4px solid #e53935;
+}
+
+.danger-zone h3 {
+  color: #c62828;
+}
+
+.warning {
+  color: #c62828;
+  margin-bottom: 15px;
+}
+
+/* Inputs tab */
+.git-section, .upload-section, .none-section {
+  padding: 15px 0;
+}
+
+.status {
+  margin: 10px 0;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.status.connected {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status.error {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.upload-info {
+  margin-bottom: 15px;
+  font-style: italic;
+  color: #555;
+}
+
+.no-files {
+  color: #888;
+  font-style: italic;
+  padding: 10px 0;
+}
+
+.checkbox-group {
+  display: flex;
+  gap: 20px;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox input {
+  margin-right: 8px;
+}

@@ -187,6 +187,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigate(['/new-project']);
   }
 
+  onLastProjectClick(): void {
+    this.router.navigate(['/project']);
+  }
+
   onSettingsClick(): void {
     this.router.navigate(['/settings']);
   }

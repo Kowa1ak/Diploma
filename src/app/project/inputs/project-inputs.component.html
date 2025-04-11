@@ -1,0 +1,102 @@
+<div class="tab-content">
+  <h2>Manage Project Inputs</h2>
+
+  <div class="source-code card">
+    <h3>Source Code</h3>
+
+    <div *ngIf="sourceCodeMethod === 'git'" class="git-section">
+      <div class="form-group">
+        <label for="repoUrl">Repository URL:</label>
+        <input
+          type="text"
+          id="repoUrl"
+          [(ngModel)]="gitRepositoryUrl"
+          class="form-control"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="branch">Branch:</label>
+        <input
+          type="text"
+          id="branch"
+          [(ngModel)]="gitBranch"
+          class="form-control"
+        />
+      </div>
+
+      <div class="form-actions">
+        <button class="action-button" (click)="connectRepository()">
+          Connect / Update Repository
+        </button>
+        <div class="status" [ngClass]="repositoryStatus">
+          Status:
+          {{
+            repositoryStatus === "connected"
+              ? "Connected"
+              : repositoryStatus === "error"
+              ? "Error: Cannot access repository"
+              : "Not connected"
+          }}
+        </div>
+        <button class="action-button" (click)="fetchLatestCode()">
+          Fetch Latest Code
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="sourceCodeMethod === 'upload'" class="upload-section">
+      <div class="upload-info">
+        <p>Last uploaded: project-code-v1.2.zip (2023-05-15)</p>
+      </div>
+      <button class="action-button" (click)="uploadCode()">
+        <mat-icon>upload_file</mat-icon> Upload New Code Archive
+      </button>
+    </div>
+
+    <div *ngIf="sourceCodeMethod === 'none'" class="none-section">
+      <p>
+        Source code analysis is not configured for this project. Test generation
+        will rely solely on requirements.
+      </p>
+      <button class="action-button" (click)="configureSourceCode()">
+        Configure Source Code
+      </button>
+    </div>
+  </div>
+
+  <div class="requirements card">
+    <h3>Requirements</h3>
+
+    <div class="form-group">
+      <label for="requirementsText">Project Requirements:</label>
+      <textarea
+        id="requirementsText"
+        [(ngModel)]="requirements"
+        rows="6"
+        class="form-control"
+      ></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Or Upload Requirements File:</label>
+      <div class="upload-button">
+        <button class="action-button" (click)="uploadRequirement()">
+          <mat-icon>upload_file</mat-icon> Upload Requirement File
+        </button>
+      </div>
+    </div>
+
+    <div class="uploaded-files">
+      <h4>Uploaded Files</h4>
+      <div class="no-files">No files uploaded</div>
+      <!-- File items would be listed here -->
+    </div>
+
+    <div class="form-actions">
+      <button class="action-button primary" (click)="saveRequirements()">
+        Save Requirements
+      </button>
+    </div>
+  </div>
+</div>

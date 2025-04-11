@@ -1,0 +1,210 @@
+<div class="tab-content">
+  <h2>Generate Test Cases</h2>
+
+  <div class="generate-layout">
+    <!-- Левая колонка: Конфигурация генерации -->
+    <div class="config-column">
+      <div class="generation-config card">
+        <h3>Generation Configuration</h3>
+
+        <div class="form-group compact">
+          <label>Source of Analysis:</label>
+          <div class="switch-group">
+            <div class="switch-item">
+              <label for="analyzeCode">Analyze Source Code</label>
+              <div class="switch-wrapper">
+                <input
+                  type="checkbox"
+                  id="analyzeCode"
+                  [(ngModel)]="analyzeCode"
+                  class="switch-input"
+                />
+                <label for="analyzeCode" class="switch"></label>
+              </div>
+            </div>
+            <div class="switch-item">
+              <label for="analyzeRequirements">Analyze Requirements</label>
+              <div class="switch-wrapper">
+                <input
+                  type="checkbox"
+                  id="analyzeRequirements"
+                  [(ngModel)]="analyzeRequirements"
+                  class="switch-input"
+                />
+                <label for="analyzeRequirements" class="switch"></label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group compact">
+          <label>AI Strategy:</label>
+          <div class="strategy-buttons">
+            <button
+              class="strategy-button"
+              [class.active]="generationStrategy === 'balanced'"
+              (click)="selectStrategy('balanced')"
+            >
+              Balanced Coverage
+              <div class="strategy-description">
+                Even distribution of different test types
+              </div>
+            </button>
+
+            <button
+              class="strategy-button"
+              [class.active]="generationStrategy === 'edge'"
+              (click)="selectStrategy('edge')"
+            >
+              Edge Cases
+              <div class="strategy-description">
+                Focus on boundary conditions
+              </div>
+            </button>
+
+            <button
+              class="strategy-button"
+              [class.active]="generationStrategy === 'security'"
+              (click)="selectStrategy('security')"
+            >
+              Security Focus
+              <div class="strategy-description">
+                Priority on security testing
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group compact">
+          <div class="label-with-help">
+            <label>Target Components:</label>
+            <div class="help-icon">
+              <mat-icon>help_outline</mat-icon>
+              <div class="tooltip-right">
+                Focus test generation on specific modules or classes.
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="!componentsLoaded" class="components-loading">
+            <button class="action-button small" (click)="loadComponents()">
+              <mat-icon>search</mat-icon> Scan for Components
+            </button>
+          </div>
+
+          <div *ngIf="componentsLoaded" class="components-selection">
+            <div class="component-list">
+              <div
+                *ngFor="let component of availableComponents"
+                class="component-item"
+              >
+                <input
+                  type="checkbox"
+                  [id]="'component-' + component.id"
+                  [checked]="isComponentSelected(component.id)"
+                  (change)="toggleComponent(component.id)"
+                />
+                <label [for]="'component-' + component.id">
+                  {{ component.name }}
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group compact">
+          <label for="testCaseCount">Number of Test Cases:</label>
+          <div class="test-case-count-selector">
+            <div class="range-container">
+              <input
+                type="range"
+                id="testCaseCount"
+                [(ngModel)]="testCaseCount"
+                min="1"
+                max="10"
+                step="1"
+                class="range-slider"
+              />
+              <div class="range-labels">
+                <span>1</span>
+                <span>5</span>
+                <span>10</span>
+              </div>
+            </div>
+            <div class="count-display">{{ testCaseCount }}</div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button
+            class="action-button primary centered-button"
+            (click)="startGeneration()"
+          >
+            Start Generation
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Правая колонка: История генераций -->
+    <div class="history-column">
+      <div class="generation-history card">
+        <h3>Generation History</h3>
+        <div class="help-text status-explanation">
+          <mat-icon>info</mat-icon>
+          <span
+            >"Failed" status means the generation couldn't complete due to
+            errors.</span
+          >
+        </div>
+
+        <div class="table-container">
+          <table class="generation-table">
+            <thead>
+              <tr>
+                <th>Date/Time</th>
+                <th>Status</th>
+                <th>Tests</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let run of generationRuns">
+                <td>{{ run.timestamp | date : "short" }}</td>
+                <td>
+                  <span
+                    class="status-badge"
+                    [class]="run.status.toLowerCase().replace(' ', '-')"
+                  >
+                    {{ run.status }}
+                  </span>
+                </td>
+                <td>{{ run.testCasesCount }}</td>
+                <td class="actions">
+                  <button
+                    class="icon-button"
+                    *ngIf="run.status === 'Completed'"
+                    title="View Results"
+                  >
+                    <mat-icon>visibility</mat-icon>
+                  </button>
+                  <button
+                    class="icon-button"
+                    *ngIf="run.status === 'In Progress'"
+                    title="Cancel"
+                  >
+                    <mat-icon>stop</mat-icon>
+                  </button>
+                  <button class="icon-button" title="Delete Record">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

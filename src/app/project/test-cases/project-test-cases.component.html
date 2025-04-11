@@ -1,0 +1,136 @@
+<div class="tab-content">
+  <h2>Generated Test Cases</h2>
+
+  <div class="test-case-controls card">
+    <div class="control-row">
+      <div class="search-box">
+        <input
+          type="text"
+          placeholder="Search test cases..."
+          [(ngModel)]="searchTerm"
+          class="form-control"
+        />
+        <mat-icon>search</mat-icon>
+      </div>
+
+      <div class="filter-group">
+        <select [(ngModel)]="typeFilter" class="form-control">
+          <option value="">All Types</option>
+          <option value="Positive">Positive</option>
+          <option value="Negative">Negative</option>
+          <option value="Boundary">Boundary</option>
+          <option value="Security">Security</option>
+          <option value="Performance">Performance</option>
+        </select>
+
+        <select [(ngModel)]="componentFilter" class="form-control">
+          <option value="">All Components</option>
+          <option value="Authentication">Authentication</option>
+          <option value="User Profile">User Profile</option>
+          <option value="API">API</option>
+        </select>
+
+        <select [(ngModel)]="statusFilter" class="form-control">
+          <option value="">All Status</option>
+          <option value="New">New</option>
+          <option value="Reviewed">Reviewed</option>
+          <option value="Needs Revision">Needs Revision</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="control-row">
+      <div class="generation-selector">
+        <label>Generation Run:</label>
+        <select [(ngModel)]="generationRunFilter" class="form-control">
+          <option value="">All Runs</option>
+          <option *ngFor="let run of generationRuns" [value]="run.id">
+            {{ run.timestamp | date : "short" }} ({{
+              run.testCasesCount
+            }}
+            tests)
+          </option>
+        </select>
+      </div>
+
+      <div class="export-buttons">
+        <button class="action-button" (click)="exportCSV()">
+          <mat-icon>file_download</mat-icon> Export as CSV
+        </button>
+        <button class="action-button" (click)="exportJSON()">
+          <mat-icon>code</mat-icon> Export as JSON
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="test-cases-table card">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name/Description</th>
+          <th>Type</th>
+          <th>Component</th>
+          <th>Priority</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let testCase of filteredTestCases">
+          <td>{{ testCase.id }}</td>
+          <td class="test-name">{{ testCase.name }}</td>
+          <td>
+            <span class="badge" [class]="testCase.type.toLowerCase()">{{
+              testCase.type
+            }}</span>
+          </td>
+          <td>{{ testCase.component }}</td>
+          <td>
+            <span
+              class="priority"
+              [class]="'priority-' + testCase.priority.toLowerCase()"
+            >
+              {{ testCase.priority }}
+            </span>
+          </td>
+          <td>
+            <span
+              class="status"
+              [class]="
+                'status-' +
+                testCase.reviewStatus.toLowerCase().replace(' ', '-')
+              "
+            >
+              {{ testCase.reviewStatus }}
+            </span>
+          </td>
+          <td class="actions">
+            <button
+              class="icon-button"
+              (click)="viewTestCase(testCase.id)"
+              title="View Details"
+            >
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button
+              class="icon-button"
+              (click)="editTestCase(testCase.id)"
+              title="Edit"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              class="icon-button"
+              (click)="deleteTestCase(testCase.id)"
+              title="Delete"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

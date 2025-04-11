@@ -1,5 +1,5 @@
 .app-header {
-  position: fixed;
+  position: fixed; /* или static */
   top: 0;
   left: 0;
   width: 100%;
@@ -10,6 +10,7 @@
   justify-content: center; /* Выравниваем элементы по центру */
   align-items: center;
   padding: 10px 0px;
+  background: white;
 }
 
 .logo {

@@ -1,0 +1,105 @@
+/* Tab Content */
+.tab-content {
+  padding: 20px 0;
+  height: auto; /* Позволяет контенту определять высоту */
+  overflow: visible; /* Предотвращает принудительный скролл */
+}
+
+h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+h3 {
+  font-size: 1.4rem;
+  color: #444;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 30px;
+  overflow: visible; /* Отключаем переполнение */
+}
+
+/* Forms and Controls */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #f9f9f9;
+  font-size: 1rem;
+}
+
+.form-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+/* Settings styles */
+.danger-zone {
+  background: #fdeded;
+  border-left: 4px solid #e53935;
+}
+
+.danger-zone h3 {
+  color: #c62828;
+}
+
+.warning {
+  color: #c62828;
+  margin-bottom: 15px;
+}
+
+/* Buttons */
+.action-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background: #f0f0f0;
+  color: #333;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.action-button mat-icon {
+  margin-right: 5px;
+  font-size: 18px;
+}
+
+.action-button.primary {
+  background: #0077cc;
+  color: white;
+}
+
+.action-button.danger {
+  background: #e53935;
+  color: white;
+}
+
+.action-button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}

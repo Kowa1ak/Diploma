@@ -1,0 +1,37 @@
+<div class="project-container">
+  <!-- Project Header -->
+  <div class="project-header">
+    <h1 class="project-title">{{ project.name }}</h1>
+  </div>
+
+  <!-- Project Tabs -->
+  <mat-tab-group
+    [selectedIndex]="activeTab"
+    (selectedIndexChange)="setActiveTab($event)"
+  >
+    <!-- Dashboard Tab -->
+    <mat-tab label="Dashboard">
+      <app-project-dashboard [project]="project"></app-project-dashboard>
+    </mat-tab>
+
+    <!-- Inputs Tab -->
+    <mat-tab label="Inputs">
+      <app-project-inputs [project]="project"></app-project-inputs>
+    </mat-tab>
+
+    <!-- Generate Tab -->
+    <mat-tab label="Generate">
+      <app-project-generate [project]="project"></app-project-generate>
+    </mat-tab>
+
+    <!-- Test Cases Tab -->
+    <mat-tab label="Test Cases">
+      <app-project-test-cases [project]="project"></app-project-test-cases>
+    </mat-tab>
+
+    <!-- Settings Tab -->
+    <mat-tab label="Settings">
+      <app-project-settings [project]="project"></app-project-settings>
+    </mat-tab>
+  </mat-tab-group>
+</div>
