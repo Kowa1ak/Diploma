@@ -1,7 +1,14 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  Input,
+  ChangeDetectionStrategy,
+  OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { RouterModule } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import {
   Project,
   TestCase,
@@ -15,12 +22,12 @@ import {
 @Component({
   selector: 'app-project-test-cases',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule],
+  imports: [CommonModule, FormsModule, MatIconModule, RouterModule],
   templateUrl: './project-test-cases.component.html',
   styleUrls: ['./project-test-cases.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProjectTestCasesComponent {
+export class ProjectTestCasesComponent implements OnInit {
   @Input() project!: Project;
 
   // Search and filters
@@ -101,6 +108,17 @@ export class ProjectTestCasesComponent {
       reviewStatus: TestCaseReviewStatus.New,
     },
   ];
+
+  constructor(private route: ActivatedRoute) {}
+
+  ngOnInit(): void {
+    // Получаем фильтр по generationRun из параметров URL
+    this.route.queryParams.subscribe((params) => {
+      if (params['generationRun']) {
+        this.generationRunFilter = params['generationRun'];
+      }
+    });
+  }
 
   get filteredTestCases(): TestCase[] {
     return this.testCases.filter((tc) => {

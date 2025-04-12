@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { Router } from '@angular/router';
 import {
   Project,
   GenerationRun,
@@ -88,6 +89,8 @@ export class ProjectDashboardComponent implements AfterViewInit {
     );
   }
 
+  constructor(private router: Router) {}
+
   ngAfterViewInit() {
     this.initStatusChart();
   }
@@ -139,7 +142,19 @@ export class ProjectDashboardComponent implements AfterViewInit {
     this.manageInputs.emit();
   }
 
-  onViewAllTestCases() {
+  onViewAllTestCases(): void {
     this.viewTestCases.emit();
+    // Переходим на вкладку Test Cases без фильтра
+    this.router.navigate(['/project'], { queryParams: { tab: 'test-cases' } });
+  }
+
+  viewGenerationResults(runId: string): void {
+    // Переходим на вкладку Test Cases с фильтром по generationRun
+    this.router.navigate(['/project'], {
+      queryParams: {
+        tab: 'test-cases',
+        generationRun: runId,
+      },
+    });
   }
 }

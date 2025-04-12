@@ -45,9 +45,7 @@
         <select [(ngModel)]="generationRunFilter" class="form-control">
           <option value="">All Runs</option>
           <option *ngFor="let run of generationRuns" [value]="run.id">
-            {{ run.timestamp | date : "short" }} ({{
-              run.testCasesCount
-            }}
+            {{ run.timestamp | date : "short" }} ({{ run.testCasesCount }}
             tests)
           </option>
         </select>
@@ -80,7 +78,11 @@
       <tbody>
         <tr *ngFor="let testCase of filteredTestCases">
           <td>{{ testCase.id }}</td>
-          <td class="test-name">{{ testCase.name }}</td>
+          <td class="test-name">
+            <a [routerLink]="['/project/test-case', testCase.id]">{{
+              testCase.name
+            }}</a>
+          </td>
           <td>
             <span class="badge" [class]="testCase.type.toLowerCase()">{{
               testCase.type
@@ -109,7 +111,7 @@
           <td class="actions">
             <button
               class="icon-button"
-              (click)="viewTestCase(testCase.id)"
+              [routerLink]="['/project/test-case', testCase.id]"
               title="View Details"
             >
               <mat-icon>visibility</mat-icon>

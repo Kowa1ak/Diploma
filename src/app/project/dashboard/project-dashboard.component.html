@@ -111,7 +111,7 @@
               <button
                 class="action-button"
                 *ngIf="run.status === 'Completed'"
-                (click)="onViewAllTestCases()"
+                (click)="viewGenerationResults(run.id)"
               >
                 View Results
               </button>

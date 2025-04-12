@@ -49,6 +49,14 @@ export interface TestCase {
   reviewStatus: TestCaseReviewStatus;
   inputData?: string;
   expectedOutcome?: string;
+  // Новые поля для детального представления
+  description?: string;
+  preconditions?: string;
+  steps?: string[];
+  notes?: string;
+  generatedAt?: Date;
+  relatedRequirements?: string[];
+  aiConfidence?: number;
 }
 
 export interface GenerationRun {

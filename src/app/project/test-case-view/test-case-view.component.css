@@ -1,0 +1,380 @@
+.test-case-view-container {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 100px;
+  background-color: #f5f7fa;
+}
+
+/* Заголовок тест-кейса */
+.test-case-header {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #555;
+  cursor: pointer;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+}
+
+.back-button:hover {
+  color: #000;
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.test-id {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.title-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.test-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.edit-title {
+  width: 100%;
+  font-size: 1.8rem;
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.edit-button {
+  background: transparent;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+}
+
+.edit-button:hover {
+  background: #f0f0f0;
+  color: #333;
+}
+
+/* Метаданные */
+.metadata {
+  margin: 15px 0;
+}
+
+.metadata-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.metadata-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.metadata-label {
+  font-weight: 600;
+  color: #555;
+}
+
+.badge {
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.badge.positive {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.badge.negative {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.badge.boundary {
+  background: #fff8e1;
+  color: #f57f17;
+}
+
+.badge.security {
+  background: #e8eaf6;
+  color: #3949ab;
+}
+
+.priority {
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.priority.priority-high {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.priority.priority-medium {
+  background: #fff8e1;
+  color: #f57f17;
+}
+
+.priority.priority-low {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+/* Статус-бар */
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.status-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-label {
+  font-weight: 600;
+  color: #555;
+}
+
+.status-badge {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.status-badge.new {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.status-badge.reviewed {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-badge.needs-revision {
+  background: #fff8e1;
+  color: #f57f17;
+}
+
+.status-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.status-button {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  background: transparent;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.status-button:hover {
+  border-color: #999;
+}
+
+.status-button.active {
+  background: #f0f0f0;
+  border-color: #999;
+  font-weight: 600;
+}
+
+/* Содержимое тест-кейса */
+.test-case-content {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+}
+
+.section {
+  margin-bottom: 25px;
+}
+
+.section-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
+
+.section-content {
+  color: #333;
+  line-height: 1.5;
+}
+
+.section-content.steps ol {
+  margin-left: 20px;
+  padding-left: 0;
+}
+
+.section-content.steps li {
+  margin-bottom: 8px;
+}
+
+pre.code {
+  background: #f5f7fa;
+  padding: 12px;
+  border-radius: 5px;
+  font-family: monospace;
+  overflow: auto;
+  white-space: pre-wrap;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  background: #e3f2fd;
+  color: #1565c0;
+  padding: 3px 10px;
+  border-radius: 15px;
+  font-size: 0.85rem;
+}
+
+.metadata-section {
+  background: #f5f7fa;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+/* AI Confidence Bar */
+.ai-confidence {
+  margin-top: 15px;
+}
+
+.confidence-label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #555;
+}
+
+.confidence-bar {
+  height: 20px;
+  background: #eee;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.confidence-fill {
+  height: 100%;
+  background: linear-gradient(to right, #81c784, #4caf50);
+  border-radius: 10px;
+}
+
+.confidence-value {
+  position: absolute;
+  right: 10px;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Формы редактирования */
+.form-control {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 100px;
+  resize: vertical;
+}
+
+.code-editor {
+  font-family: monospace;
+  white-space: pre;
+}
+
+/* Действия в футере */
+.footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.action-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-button.primary {
+  background: #0077cc;
+  color: white;
+}
+
+.action-button.secondary {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.action-button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}

@@ -1,0 +1,270 @@
+<div class="test-case-view-container" *ngIf="testCase">
+  <div class="test-case-header">
+    <div class="back-button" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      <span>Back to Test Cases</span>
+    </div>
+
+    <div class="header-content">
+      <div class="test-id">{{ testCase.id }}</div>
+
+      <div class="title-section" *ngIf="!editMode">
+        <h1 class="test-title">{{ testCase.name }}</h1>
+        <button class="edit-button" (click)="toggleEditMode()">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </div>
+
+      <div class="title-section" *ngIf="editMode">
+        <input type="text" [(ngModel)]="testCase.name" class="edit-title" />
+      </div>
+    </div>
+
+    <div class="metadata">
+      <div class="metadata-row">
+        <div class="metadata-item">
+          <span class="metadata-label">Type:</span>
+          <span
+            *ngIf="!editMode"
+            class="badge"
+            [class]="testCase.type.toLowerCase()"
+            >{{ testCase.type }}</span
+          >
+          <select
+            *ngIf="editMode"
+            [(ngModel)]="testCase.type"
+            class="form-control"
+          >
+            <option *ngFor="let type of testCaseTypes" [value]="type">
+              {{ type }}
+            </option>
+          </select>
+        </div>
+
+        <div class="metadata-item">
+          <span class="metadata-label">Priority:</span>
+          <span
+            *ngIf="!editMode"
+            class="priority"
+            [class]="'priority-' + testCase.priority.toLowerCase()"
+            >{{ testCase.priority }}</span
+          >
+          <select
+            *ngIf="editMode"
+            [(ngModel)]="testCase.priority"
+            class="form-control"
+          >
+            <option
+              *ngFor="let priority of testCasePriorities"
+              [value]="priority"
+            >
+              {{ priority }}
+            </option>
+          </select>
+        </div>
+
+        <div class="metadata-item">
+          <span class="metadata-label">Source:</span>
+          <span *ngIf="!editMode">{{ testCase.source }}</span>
+          <select
+            *ngIf="editMode"
+            [(ngModel)]="testCase.source"
+            class="form-control"
+          >
+            <option *ngFor="let source of testCaseSources" [value]="source">
+              {{ source }}
+            </option>
+          </select>
+        </div>
+
+        <div class="metadata-item">
+          <span class="metadata-label">Component:</span>
+          <span *ngIf="!editMode">{{ testCase.component }}</span>
+          <input
+            *ngIf="editMode"
+            type="text"
+            [(ngModel)]="testCase.component"
+            class="form-control"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <div class="status-section">
+        <span class="status-label">Status:</span>
+        <span
+          class="status-badge"
+          [class]="testCase.reviewStatus.toLowerCase().replace(' ', '-')"
+        >
+          {{ testCase.reviewStatus }}
+        </span>
+      </div>
+
+      <div class="status-actions">
+        <button
+          class="status-button"
+          (click)="updateReviewStatus(ReviewStatus.New)"
+          [class.active]="testCase.reviewStatus === ReviewStatus.New"
+        >
+          New
+        </button>
+        <button
+          class="status-button"
+          (click)="updateReviewStatus(ReviewStatus.Reviewed)"
+          [class.active]="testCase.reviewStatus === ReviewStatus.Reviewed"
+        >
+          Reviewed
+        </button>
+        <button
+          class="status-button"
+          (click)="updateReviewStatus(ReviewStatus.NeedsRevision)"
+          [class.active]="testCase.reviewStatus === ReviewStatus.NeedsRevision"
+        >
+          Needs Revision
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="test-case-content">
+    <div class="content-grid">
+      <!-- Левая колонка -->
+      <div class="column">
+        <div class="section">
+          <h2 class="section-title">Description</h2>
+          <div *ngIf="!editMode" class="section-content">
+            {{ testCase.description }}
+          </div>
+          <textarea
+            *ngIf="editMode"
+            [(ngModel)]="testCase.description"
+            class="form-control textarea"
+          ></textarea>
+        </div>
+
+        <div class="section">
+          <h2 class="section-title">Preconditions</h2>
+          <div *ngIf="!editMode" class="section-content">
+            {{ testCase.preconditions }}
+          </div>
+          <textarea
+            *ngIf="editMode"
+            [(ngModel)]="testCase.preconditions"
+            class="form-control textarea"
+          ></textarea>
+        </div>
+
+        <div class="section">
+          <h2 class="section-title">Test Steps</h2>
+          <div
+            *ngIf="!editMode && testCase.steps"
+            class="section-content steps"
+          >
+            <ol>
+              <li *ngFor="let step of testCase.steps">{{ step }}</li>
+            </ol>
+          </div>
+          <textarea
+            *ngIf="editMode"
+            [(ngModel)]="editedSteps"
+            class="form-control textarea"
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- Правая колонка -->
+      <div class="column">
+        <div class="section">
+          <h2 class="section-title">Input Data</h2>
+          <pre *ngIf="!editMode" class="section-content code">{{
+            testCase.inputData
+          }}</pre>
+          <textarea
+            *ngIf="editMode"
+            [(ngModel)]="testCase.inputData"
+            class="form-control textarea code-editor"
+          ></textarea>
+        </div>
+
+        <div class="section">
+          <h2 class="section-title">Expected Outcome</h2>
+          <div *ngIf="!editMode" class="section-content">
+            {{ testCase.expectedOutcome }}
+          </div>
+          <textarea
+            *ngIf="editMode"
+            [(ngModel)]="testCase.expectedOutcome"
+            class="form-control textarea"
+          ></textarea>
+        </div>
+
+        <div class="section">
+          <h2 class="section-title">Notes & AI Analysis</h2>
+          <div *ngIf="!editMode" class="section-content">
+            <p>{{ testCase.notes }}</p>
+            <div
+              *ngIf="testCase.aiConfidence !== undefined"
+              class="ai-confidence"
+            >
+              <span class="confidence-label">AI Confidence:</span>
+              <div class="confidence-bar">
+                <div
+                  class="confidence-fill"
+                  [style.width.%]="testCase.aiConfidence * 100"
+                ></div>
+                <span class="confidence-value"
+                  >{{ (testCase.aiConfidence * 100).toFixed(0) }}%</span
+                >
+              </div>
+            </div>
+          </div>
+          <textarea
+            *ngIf="editMode"
+            [(ngModel)]="testCase.notes"
+            class="form-control textarea"
+          ></textarea>
+        </div>
+
+        <div class="section">
+          <h2 class="section-title">Related Requirements</h2>
+          <div
+            *ngIf="!editMode && testCase.relatedRequirements"
+            class="section-content tags"
+          >
+            <span
+              class="tag"
+              *ngFor="let req of testCase.relatedRequirements"
+              >{{ req }}</span
+            >
+          </div>
+          <textarea
+            *ngIf="editMode"
+            [(ngModel)]="editedRequirements"
+            class="form-control textarea"
+          ></textarea>
+        </div>
+
+        <div class="section metadata-section">
+          <div class="metadata-item">
+            <span class="metadata-label">Generated on:</span>
+            <span>{{ testCase.generatedAt | date : "medium" }}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Generation Run:</span>
+            <span>{{ testCase.generationRun }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-actions" *ngIf="editMode">
+    <button class="action-button secondary" (click)="toggleEditMode()">
+      Cancel
+    </button>
+    <button class="action-button primary" (click)="saveChanges()">
+      Save Changes
+    </button>
+  </div>
+</div>

@@ -7,32 +7,67 @@
       <div class="generation-config card">
         <h3>Generation Configuration</h3>
 
-        <div class="form-group compact">
-          <label>Source of Analysis:</label>
-          <div class="switch-group">
-            <div class="switch-item">
-              <label for="analyzeCode">Analyze Source Code</label>
-              <div class="switch-wrapper">
-                <input
-                  type="checkbox"
-                  id="analyzeCode"
-                  [(ngModel)]="analyzeCode"
-                  class="switch-input"
-                />
-                <label for="analyzeCode" class="switch"></label>
+        <!-- Группируем элементы Source of Analysis и Number of Test Cases в одном ряду -->
+        <div class="form-row">
+          <!-- Source of Analysis (50% ширины) -->
+          <div class="form-group compact half-width">
+            <label>Source of Analysis:</label>
+            <div class="switch-group">
+              <div class="switch-item">
+                <label for="analyzeCode">Analyze Source Code</label>
+                <div class="switch-wrapper">
+                  <input
+                    type="checkbox"
+                    id="analyzeCode"
+                    [(ngModel)]="analyzeCode"
+                    class="switch-input"
+                  />
+                  <label for="analyzeCode" class="switch"></label>
+                </div>
+              </div>
+              <div class="switch-item">
+                <label for="analyzeRequirements">Analyze Requirements</label>
+                <div class="switch-wrapper">
+                  <input
+                    type="checkbox"
+                    id="analyzeRequirements"
+                    [(ngModel)]="analyzeRequirements"
+                    class="switch-input"
+                  />
+                  <label for="analyzeRequirements" class="switch"></label>
+                </div>
               </div>
             </div>
-            <div class="switch-item">
-              <label for="analyzeRequirements">Analyze Requirements</label>
-              <div class="switch-wrapper">
+          </div>
+
+          <!-- Number of Test Cases (50% ширины) -->
+          <div class="form-group compact half-width">
+            <label for="testCaseCount">Number of Test Cases:</label>
+            <div class="test-case-count-selector">
+              <div class="range-container">
                 <input
-                  type="checkbox"
-                  id="analyzeRequirements"
-                  [(ngModel)]="analyzeRequirements"
-                  class="switch-input"
+                  type="range"
+                  id="testCaseCount"
+                  [(ngModel)]="testCaseCount"
+                  min="1"
+                  max="10"
+                  step="1"
+                  class="range-slider"
                 />
-                <label for="analyzeRequirements" class="switch"></label>
+                <div class="range-labels">
+                  <span>1</span>
+                  <span>2</span>
+                  <span>3</span>
+                  <span>4</span>
+                  <span>5</span>
+                  <span>6</span>
+                  <span>7</span>
+                  <span>8</span>
+                  <span>9</span>
+                  <span>10</span>
+                </div>
               </div>
+              <div class="count-display">{{ testCaseCount }}</div>
             </div>
           </div>
         </div>
@@ -109,29 +144,6 @@
                 </label>
               </div>
             </div>
-          </div>
-        </div>
-
-        <div class="form-group compact">
-          <label for="testCaseCount">Number of Test Cases:</label>
-          <div class="test-case-count-selector">
-            <div class="range-container">
-              <input
-                type="range"
-                id="testCaseCount"
-                [(ngModel)]="testCaseCount"
-                min="1"
-                max="10"
-                step="1"
-                class="range-slider"
-              />
-              <div class="range-labels">
-                <span>1</span>
-                <span>5</span>
-                <span>10</span>
-              </div>
-            </div>
-            <div class="count-display">{{ testCaseCount }}</div>
           </div>
         </div>
 

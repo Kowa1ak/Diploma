@@ -6,6 +6,7 @@ import { NewProjectComponent } from './new-project/new-project.component';
 import { SettingsComponent } from './settings/settings.component';
 import { AllProjectComponent } from './all-project/all-project.component';
 import { ProjectComponent } from './project/project.component';
+import { TestCaseViewComponent } from './project/test-case-view/test-case-view.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -21,5 +22,6 @@ export const routes: Routes = [
   { path: 'sign-up', component: SignUpComponent },
   { path: 'all-project', component: AllProjectComponent },
   { path: 'project', component: ProjectComponent },
+  { path: 'project/test-case/:id', component: TestCaseViewComponent },
   { path: '**', redirectTo: 'home' },
 ];

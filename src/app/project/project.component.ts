@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
+import { ActivatedRoute } from '@angular/router';
 
 import { ProjectDashboardComponent } from './dashboard/project-dashboard.component';
 import { ProjectInputsComponent } from './inputs/project-inputs.component';
@@ -44,9 +45,32 @@ export class ProjectComponent implements OnInit {
   // UI states
   activeTab: number = 0;
 
-  constructor() {}
+  constructor(private route: ActivatedRoute) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // Проверяем параметры URL для установки активной вкладки
+    this.route.queryParams.subscribe((params) => {
+      if (params['tab']) {
+        switch (params['tab']) {
+          case 'dashboard':
+            this.activeTab = 0;
+            break;
+          case 'inputs':
+            this.activeTab = 1;
+            break;
+          case 'generate':
+            this.activeTab = 2;
+            break;
+          case 'test-cases':
+            this.activeTab = 3;
+            break;
+          case 'settings':
+            this.activeTab = 4;
+            break;
+        }
+      }
+    });
+  }
 
   // Tab navigation
   setActiveTab(tabIndex: number): void {
