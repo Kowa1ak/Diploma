@@ -10,7 +10,7 @@
   justify-content: center; /* Выравниваем элементы по центру */
   align-items: center;
   padding: 10px 0px;
-  background: white;
+  /* background: white; */
 }
 
 .logo {

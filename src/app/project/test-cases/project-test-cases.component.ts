@@ -3,12 +3,16 @@ import {
   Input,
   ChangeDetectionStrategy,
   OnInit,
+  OnDestroy,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { TestFilterService } from '../shared/test-filter.service';
 import {
   Project,
   TestCase,
@@ -27,7 +31,7 @@ import {
   styleUrls: ['./project-test-cases.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProjectTestCasesComponent implements OnInit {
+export class ProjectTestCasesComponent implements OnInit, OnDestroy {
   @Input() project!: Project;
 
   // Search and filters
@@ -36,6 +40,9 @@ export class ProjectTestCasesComponent implements OnInit {
   componentFilter: string = '';
   statusFilter: string = '';
   generationRunFilter: string = '';
+
+  // Подписки для отслеживания изменений
+  private subscriptions: Subscription[] = [];
 
   // Generation runs (for filtering)
   generationRuns: GenerationRun[] = [
@@ -109,15 +116,42 @@ export class ProjectTestCasesComponent implements OnInit {
     },
   ];
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(
+    private route: ActivatedRoute,
+    private filterService: TestFilterService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
-    // Получаем фильтр по generationRun из параметров URL
-    this.route.queryParams.subscribe((params) => {
-      if (params['generationRun']) {
-        this.generationRunFilter = params['generationRun'];
-      }
-    });
+    // 1. Подписываемся на изменения в URL параметрах
+    this.subscriptions.push(
+      this.route.queryParams.subscribe((params) => {
+        if (params['generationRun']) {
+          this.generationRunFilter = params['generationRun'];
+          this.cdr.markForCheck(); // Явно говорим Angular проверить изменения
+        }
+      })
+    );
+
+    // 2. Подписываемся на изменения в сервисе фильтрации
+    this.subscriptions.push(
+      this.filterService.generationRunFilter$.subscribe((runId) => {
+        if (runId !== this.generationRunFilter) {
+          this.generationRunFilter = runId;
+          this.cdr.markForCheck();
+        }
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    // Отписываемся от всех подписок при уничтожении компонента
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
+  }
+
+  // При изменении фильтра вручную, обновляем состояние в сервисе
+  onFilterChange(): void {
+    this.filterService.setGenerationRunFilter(this.generationRunFilter);
   }
 
   get filteredTestCases(): TestCase[] {

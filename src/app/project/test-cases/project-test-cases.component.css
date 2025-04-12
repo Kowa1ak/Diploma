@@ -1,6 +1,9 @@
 /* Tab Content */
 .tab-content {
   padding: 20px 0;
+  height: auto;
+  min-height: 100%;
+  box-sizing: border-box;
 }
 
 h2 {

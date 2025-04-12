@@ -42,7 +42,11 @@
     <div class="control-row">
       <div class="generation-selector">
         <label>Generation Run:</label>
-        <select [(ngModel)]="generationRunFilter" class="form-control">
+        <select
+          [(ngModel)]="generationRunFilter"
+          (ngModelChange)="onFilterChange()"
+          class="form-control"
+        >
           <option value="">All Runs</option>
           <option *ngFor="let run of generationRuns" [value]="run.id">
             {{ run.timestamp | date : "short" }} ({{ run.testCasesCount }}

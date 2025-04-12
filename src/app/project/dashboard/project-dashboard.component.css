@@ -1,5 +1,8 @@
 .tab-content {
   padding: 0 20px;
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto; /* Разрешаем скролл */
 }
 
 h2 {
@@ -233,4 +236,44 @@ th {
   width: 100%;
   max-width: 180px;  /* Уменьшено с 250px */
   height: 180px;     /* Уменьшено с 250px */
+}
+
+/* Адаптивные стили */
+@media (max-width: 1200px) {
+  .dashboard-flex-container,
+  .top-dashboard-container {
+    flex-direction: column;
+  }
+  
+  .project-summary,
+  .status-chart-container,
+  .quick-actions,
+  .recent-generations {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+}
+
+@media (max-height: 700px) {
+  /* Уменьшаем размеры элементов для низких экранов */
+  .card {
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+  
+  h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+  
+  .chart-container {
+    max-width: 150px;
+    height: 150px;
+  }
 }

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { ProjectDashboardComponent } from './dashboard/project-dashboard.component';
 import { ProjectInputsComponent } from './inputs/project-inputs.component';
@@ -11,6 +11,7 @@ import { ProjectGenerateComponent } from './generate/project-generate.component'
 import { ProjectTestCasesComponent } from './test-cases/project-test-cases.component';
 import { ProjectSettingsComponent } from './settings/project-settings.component';
 import { Project, ProjectStatus } from './shared/project.models';
+import { TestFilterService } from './shared/test-filter.service';
 
 @Component({
   selector: 'app-project',
@@ -45,7 +46,11 @@ export class ProjectComponent implements OnInit {
   // UI states
   activeTab: number = 0;
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private filterService: TestFilterService
+  ) {}
 
   ngOnInit(): void {
     // Проверяем параметры URL для установки активной вкладки
@@ -69,11 +74,32 @@ export class ProjectComponent implements OnInit {
             break;
         }
       }
+
+      // Если в URL есть параметр generationRun, обновляем его в сервисе
+      if (params['generationRun']) {
+        this.filterService.setGenerationRunFilter(params['generationRun']);
+      }
     });
   }
 
   // Tab navigation
   setActiveTab(tabIndex: number): void {
     this.activeTab = tabIndex;
+
+    // Если пользователь переходит на вкладку test-cases, убеждаемся что фильтры учтены
+    if (tabIndex === 3) {
+      // 3 - индекс вкладки test-cases
+      // Здесь можно добавить дополнительную логику при необходимости
+    }
+  }
+
+  // Добавим метод для обработки изменений вкладки
+  onTabChange(index: number): void {
+    // Если переходим на дашборд (index 0), очищаем путь к URL от параметров
+    if (index === 0) {
+      this.router.navigate(['/project'], {
+        replaceUrl: true,
+      });
+    }
   }
 }

@@ -8,17 +8,35 @@ body {
 body {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* изменить на flex-start */
-  align-items: center;
-  font-family: "Figtree", sans-serif; /* Добавьте шрифт Figtree */
+  font-family: "Figtree", sans-serif;
 }
 
-/* Добавьте отступ сверху для router-outlet, чтобы избежать перекрытия с шапкой */
+/* router-outlet не должен иметь свойств отображения */
 router-outlet {
-  margin-top: 60px; /* высота шапки */
+  display: none;
+}
+
+/* Корневой контейнер для всего приложения */
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
   width: 100%;
-  flex: 1; /*  */
-  overflow-y: auto; /* Добавьте это свойство, чтобы контент мог прокручиваться внутри router-outlet */
+}
+
+/* Контейнер для контента */
+.app-content {
+  flex: 1;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Медиа-запрос для низких экранов - разрешаем скролл */
+@media (max-height: 700px) {
+  .app-content {
+    overflow-y: auto;
+  }
 }
 
 /* Добавляем отступ для основного контента, чтобы header не перекрывал его */

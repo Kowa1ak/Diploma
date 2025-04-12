@@ -1,13 +1,26 @@
+/* Контейнер проекта должен занимать все доступное пространство */
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .project-container {
   width: 100%;
   max-width: 1600px;
   margin: 0 auto;
-  font-family: Arial, sans-serif;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-top: 70px; /* Отступ сверху для хедера */
+  box-sizing: border-box; /* Учитываем padding в общей высоте */
+  overflow: hidden; /* Отключаем скролл */
 }
 
 /* Project Header */
 .project-header {
-  margin-bottom: 30px;
+  flex: 0 0 auto; /* Не растягивается и не сжимается */
+  margin-bottom: 10px;
   padding-bottom: 10px;
   border-bottom: 1px solid #eaeaea;
 }
@@ -23,13 +36,53 @@
 
 /* Tab Content */
 .tab-content {
-  padding: 20px 20px;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 0 20px;
+}
+
+::ng-deep .mat-tab-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* Важно для работы flex в Firefox */
+  overflow: hidden;
+}
+
+::ng-deep .mat-tab-header {
+  flex: 0 0 auto; /* Фиксированный размер */
 }
 
 ::ng-deep .mat-tab-body-wrapper {
-  height: auto !important; /* Позволяет содержимому вкладки определять высоту */
-  min-height: 300px; /* Минимальная высота для контента */
-  overflow: visible !important; /* Отключаем скролл */
+  flex: 1;
+  min-height: 0; /* Важно для работы flex в Firefox */
+}
+
+::ng-deep .mat-tab-body {
+  height: 100%;
+}
+
+/* Важное изменение: разрешаем вертикальный скролл внутри контентной части вкладки */
+::ng-deep .mat-tab-body-content {
+  height: 100%;
+  overflow-y: auto !important; /* Разрешаем вертикальный скролл */
+  overflow-x: hidden !important; /* Но запрещаем горизонтальный */
+  padding-bottom: 20px; /* Добавляем отступ внизу для скролла */
+  scrollbar-width: thin; /* Тонкий скролбар для Firefox */
+}
+
+/* Стилизация скроллбара для Chrome, Edge, Safari */
+::ng-deep .mat-tab-body-content::-webkit-scrollbar {
+  width: 6px; /* Тонкий скролбар */
+}
+
+::ng-deep .mat-tab-body-content::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Светлый фон трека */
+}
+
+::ng-deep .mat-tab-body-content::-webkit-scrollbar-thumb {
+  background: #cacaca; /* Серый ползунок */
+  border-radius: 3px; /* Закругление ползунка */
 }
 
 h2 {
@@ -388,4 +441,79 @@ th {
 
 .checkbox input {
   margin-right: 8px;
+}
+
+/* Настройка табов для оптимального размещения */
+.project-tabs {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* Важно для flex-контейнеров в Firefox */
+}
+
+::ng-deep .mat-tab-body-wrapper {
+  flex: 1;
+  min-height: 0;
+}
+
+/* Адаптивное поведение скролла */
+@media (min-height: 800px) {
+  /* На высоких экранах скрываем скролл при возможности */
+  ::ng-deep .mat-tab-body-content {
+    height: 100%;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+}
+
+@media (max-height: 799px) {
+  /* На низких экранах всегда показываем скролл */
+  ::ng-deep .mat-tab-body-content {
+    height: 100%;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+  
+  /* Обеспечиваем минимальную высоту для контента */
+  ::ng-deep .tab-content {
+    min-height: 600px; /* Минимальная высота, чтобы контент был виден */
+  }
+}
+
+/* Настройка карт и блоков внутри вкладок для адаптивности */
+@media (max-width: 1200px) {
+  /* При сужении экрана меняем макет колонок */
+  ::ng-deep .dashboard-flex-container,
+  ::ng-deep .top-dashboard-container,
+  ::ng-deep .generate-layout,
+  ::ng-deep .content-grid {
+    flex-direction: column !important;
+  }
+  
+  ::ng-deep .half-width,
+  ::ng-deep .column,
+  ::ng-deep .config-column,
+  ::ng-deep .history-column,
+  ::ng-deep .quick-actions,
+  ::ng-deep .recent-generations,
+  ::ng-deep .project-summary,
+  ::ng-deep .status-chart-container {
+    width: 100% !important;
+    flex: none !important;
+    margin-bottom: 15px;
+  }
+}
+
+/* Стилизация скроллбара */
+::ng-deep .mat-tab-body-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+::ng-deep .mat-tab-body-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::ng-deep .mat-tab-body-content::-webkit-scrollbar-thumb {
+  background: #cacaca;
+  border-radius: 3px;
 }

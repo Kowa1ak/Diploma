@@ -1,6 +1,9 @@
 /* Tab Content */
 .tab-content {
+  height: auto;
+  min-height: 100%;
   padding: 0 20px;
+  box-sizing: border-box;
 }
 
 h2 {
@@ -447,4 +450,41 @@ th {
 .half-width {
   flex: 1;
   min-width: 0; /* Важно для правильного расчета flex */
+}
+
+/* Адаптивные стили */
+@media (max-width: 1200px) {
+  .generate-layout {
+    flex-direction: column;
+  }
+  
+  .config-column,
+  .history-column {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+  
+  .card {
+    height: auto;
+    min-height: 300px;
+  }
+}
+
+@media (max-height: 700px) {
+  .card {
+    padding: 10px;
+    margin-bottom: 10px;
+    min-height: 250px;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+  
+  h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
 }

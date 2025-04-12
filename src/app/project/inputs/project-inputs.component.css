@@ -1,6 +1,9 @@
 /* Tab Content */
 .tab-content {
   padding: 20px 0;
+  height: auto;
+  min-height: 100%;
+  box-sizing: border-box;
 }
 
 h2 {
@@ -62,6 +65,10 @@ h4 {
 /* Inputs tab */
 .git-section, .upload-section, .none-section {
   padding: 15px 0;
+}
+
+.input-methods {
+  height: auto;
 }
 
 .status {

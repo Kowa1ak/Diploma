@@ -1,13 +1,9 @@
 <div class="project-container">
-  <!-- Project Header -->
-  <div class="project-header">
-    <h1 class="project-title">{{ project.name }}</h1>
-  </div>
-
-  <!-- Project Tabs -->
+  <!-- Project Tabs - важный класс для скролла контента -->
   <mat-tab-group
-    [selectedIndex]="activeTab"
-    (selectedIndexChange)="setActiveTab($event)"
+    class="project-tabs"
+    [(selectedIndex)]="activeTab"
+    (selectedIndexChange)="onTabChange($event)"
   >
     <!-- Dashboard Tab -->
     <mat-tab label="Dashboard">

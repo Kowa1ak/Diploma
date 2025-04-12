@@ -18,6 +18,7 @@ import {
   TestCaseReviewStatus,
 } from '../shared/project.models';
 import { Chart, registerables } from 'chart.js';
+import { TestFilterService } from '../shared/test-filter.service';
 
 // Регистрируем все компоненты Chart.js
 Chart.register(...registerables);
@@ -89,7 +90,10 @@ export class ProjectDashboardComponent implements AfterViewInit {
     );
   }
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private filterService: TestFilterService
+  ) {}
 
   ngAfterViewInit() {
     this.initStatusChart();
@@ -144,17 +148,32 @@ export class ProjectDashboardComponent implements AfterViewInit {
 
   onViewAllTestCases(): void {
     this.viewTestCases.emit();
-    // Переходим на вкладку Test Cases без фильтра
+    // Сбрасываем фильтр и переходим на вкладку Test Cases
+    this.filterService.resetFilters();
     this.router.navigate(['/project'], { queryParams: { tab: 'test-cases' } });
   }
 
   viewGenerationResults(runId: string): void {
-    // Переходим на вкладку Test Cases с фильтром по generationRun
-    this.router.navigate(['/project'], {
-      queryParams: {
-        tab: 'test-cases',
-        generationRun: runId,
-      },
-    });
+    // Устанавливаем фильтр через сервис
+    this.filterService.setGenerationRunFilter(runId);
+
+    // Решаем проблему с повторной навигацией
+    const currentUrl = this.router.url;
+    const targetUrl = '/project';
+
+    // Если мы уже на странице проекта
+    if (currentUrl.includes(targetUrl)) {
+      // Сначала переходим на другой URL, затем обратно с параметрами
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigate(['/project'], {
+          queryParams: { tab: 'test-cases', generationRun: runId },
+        });
+      });
+    } else {
+      // Обычная навигация, если мы на другой странице
+      this.router.navigate(['/project'], {
+        queryParams: { tab: 'test-cases', generationRun: runId },
+      });
+    }
   }
 }
