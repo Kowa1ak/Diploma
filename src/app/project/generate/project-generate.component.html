@@ -2,14 +2,35 @@
   <h2>Generate Test Cases</h2>
 
   <div class="generate-layout">
-    <!-- Левая колонка: Конфигурация генерации -->
-    <div class="config-column">
+    <!-- Левая колонка: Requirements и Generation Configuration -->
+    <div class="left-column">
+      <!-- Requirements (верхняя карточка) -->
+      <div class="requirements-config card">
+        <h3>Requirements</h3>
+        <div class="form-group">
+          <label for="requirements">Project Requirements:</label>
+          <textarea
+            id="requirements"
+            [(ngModel)]="requirements"
+            placeholder="Enter project requirements or specifications here..."
+            class="form-control textarea"
+            rows="4"
+          ></textarea>
+        </div>
+        <div class="form-actions">
+          <button class="action-button primary" (click)="saveRequirements()">
+            <mat-icon>save</mat-icon> Save Requirements
+          </button>
+        </div>
+      </div>
+
+      <!-- Generation Configuration (нижняя карточка) -->
       <div class="generation-config card">
         <h3>Generation Configuration</h3>
 
         <!-- Группируем элементы Source of Analysis и Number of Test Cases в одном ряду -->
         <div class="form-row">
-          <!-- Source of Analysis (50% ширины) -->
+          <!-- Source of Analysis -->
           <div class="form-group compact half-width">
             <label>Source of Analysis:</label>
             <div class="switch-group">
@@ -25,124 +46,75 @@
                   <label for="analyzeCode" class="switch"></label>
                 </div>
               </div>
-              <div class="switch-item">
-                <label for="analyzeRequirements">Analyze Requirements</label>
+              <!-- Git switch -->
+              <div class="switch-item" *ngIf="analyzeCode">
+                <label for="useGit">Use Git Repository</label>
                 <div class="switch-wrapper">
                   <input
                     type="checkbox"
-                    id="analyzeRequirements"
-                    [(ngModel)]="analyzeRequirements"
+                    id="useGit"
+                    [(ngModel)]="useGit"
                     class="switch-input"
                   />
-                  <label for="analyzeRequirements" class="switch"></label>
+                  <label for="useGit" class="switch"></label>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Number of Test Cases (50% ширины) -->
+          <!-- Number of Test Cases -->
           <div class="form-group compact half-width">
             <label for="testCaseCount">Number of Test Cases:</label>
-            <div class="test-case-count-selector">
-              <div class="range-container">
-                <input
-                  type="range"
-                  id="testCaseCount"
-                  [(ngModel)]="testCaseCount"
-                  min="1"
-                  max="10"
-                  step="1"
-                  class="range-slider"
-                />
-                <div class="range-labels">
-                  <span>1</span>
-                  <span>2</span>
-                  <span>3</span>
-                  <span>4</span>
-                  <span>5</span>
-                  <span>6</span>
-                  <span>7</span>
-                  <span>8</span>
-                  <span>9</span>
-                  <span>10</span>
-                </div>
-              </div>
-              <div class="count-display">{{ testCaseCount }}</div>
+            <div class="test-case-count-input">
+              <input
+                type="number"
+                id="testCaseCount"
+                [(ngModel)]="testCaseCount"
+                min="1"
+                max="10"
+                class="number-input"
+              />
             </div>
           </div>
         </div>
 
-        <div class="form-group compact">
-          <label>AI Strategy:</label>
-          <div class="strategy-buttons">
-            <button
-              class="strategy-button"
-              [class.active]="generationStrategy === 'balanced'"
-              (click)="selectStrategy('balanced')"
-            >
-              Balanced Coverage
-              <div class="strategy-description">
-                Even distribution of different test types
-              </div>
-            </button>
-
-            <button
-              class="strategy-button"
-              [class.active]="generationStrategy === 'edge'"
-              (click)="selectStrategy('edge')"
-            >
-              Edge Cases
-              <div class="strategy-description">
-                Focus on boundary conditions
-              </div>
-            </button>
-
-            <button
-              class="strategy-button"
-              [class.active]="generationStrategy === 'security'"
-              (click)="selectStrategy('security')"
-            >
-              Security Focus
-              <div class="strategy-description">
-                Priority on security testing
-              </div>
-            </button>
-          </div>
-        </div>
-
-        <div class="form-group compact">
-          <div class="label-with-help">
-            <label>Target Components:</label>
-            <div class="help-icon">
-              <mat-icon>help_outline</mat-icon>
-              <div class="tooltip-right">
-                Focus test generation on specific modules or classes.
-              </div>
-            </div>
-          </div>
-
-          <div *ngIf="!componentsLoaded" class="components-loading">
-            <button class="action-button small" (click)="loadComponents()">
-              <mat-icon>search</mat-icon> Scan for Components
-            </button>
-          </div>
-
-          <div *ngIf="componentsLoaded" class="components-selection">
-            <div class="component-list">
-              <div
-                *ngFor="let component of availableComponents"
-                class="component-item"
+        <!-- Остальная часть конфигурации -->
+        <div class="compact-config-container">
+          <div class="form-group compact">
+            <label>AI Strategy:</label>
+            <div class="strategy-buttons">
+              <button
+                class="strategy-button"
+                [class.active]="generationStrategy === 'balanced'"
+                (click)="selectStrategy('balanced')"
               >
-                <input
-                  type="checkbox"
-                  [id]="'component-' + component.id"
-                  [checked]="isComponentSelected(component.id)"
-                  (change)="toggleComponent(component.id)"
-                />
-                <label [for]="'component-' + component.id">
-                  {{ component.name }}
-                </label>
-              </div>
+                Balanced Coverage
+                <div class="strategy-description">
+                  Even distribution of different test types
+                </div>
+              </button>
+
+              <button
+                class="strategy-button"
+                [class.active]="generationStrategy === 'edge'"
+                (click)="selectStrategy('edge')"
+              >
+                Edge Cases
+                <div class="strategy-description">
+                  Focus on boundary conditions
+                </div>
+              </button>
+
+              <button
+                class="strategy-button"
+                [class.active]="generationStrategy === 'security'"
+                (click)="selectStrategy('security')"
+              >
+                Security Focus
+                <div class="strategy-description">
+                  Priority on security testing
+                </div>
+              </button>
             </div>
           </div>
         </div>
@@ -159,8 +131,106 @@
       </div>
     </div>
 
-    <!-- Правая колонка: История генераций -->
-    <div class="history-column">
+    <!-- Правая колонка: Source Code и Generation History -->
+    <div class="right-column" [class.with-git]="analyzeCode && useGit">
+      <!-- Source Code (отображается только если включен Git) -->
+      <div class="source-code-config card" *ngIf="analyzeCode && useGit">
+        <h3>Source Code</h3>
+
+        <!-- Git Connection Status -->
+        <div class="git-status-bar" [ngClass]="{ connected: gitConnected }">
+          <mat-icon>{{ gitConnected ? "check_circle" : "error" }}</mat-icon>
+          <span
+            >Git Repository:
+            {{ gitConnected ? "Connected" : "Not Connected" }}</span
+          >
+        </div>
+
+        <!-- Двухколоночный макет для Git и Components -->
+        <div class="source-code-layout">
+          <!-- Левая колонка - Git Repository -->
+          <div class="git-column">
+            <h4>Connect Git Repository</h4>
+            <div *ngIf="!gitConnected" class="git-form">
+              <div class="form-group">
+                <label for="gitRepo">Repository URL:</label>
+                <input
+                  type="text"
+                  id="gitRepo"
+                  [(ngModel)]="gitRepository"
+                  placeholder="https://github.com/username/repository.git"
+                  class="form-control"
+                />
+              </div>
+              <div class="form-group">
+                <label for="gitBranch">Branch:</label>
+                <input
+                  type="text"
+                  id="gitBranch"
+                  [(ngModel)]="gitBranch"
+                  placeholder="main"
+                  class="form-control"
+                />
+              </div>
+              <button
+                class="connect-button"
+                [class.connected]="gitConnected"
+                (click)="connectToGit()"
+              >
+                <mat-icon>link</mat-icon>
+                <span>Connect Repository</span>
+              </button>
+            </div>
+            <div *ngIf="gitConnected" class="connected-repo">
+              <div class="status connected">
+                <mat-icon>check_circle</mat-icon>
+                <span>Connected to repository: {{ gitRepository }}</span>
+              </div>
+              <div class="actions">
+                <button
+                  class="connect-button disconnect"
+                  (click)="disconnectGit()"
+                >
+                  <mat-icon>link_off</mat-icon>
+                  <span>Disconnect</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Правая колонка - Target Components -->
+          <div class="components-column">
+            <h4>Target Components</h4>
+            <div *ngIf="!componentsLoaded" class="components-loading">
+              <button class="scan-button" (click)="loadComponents()">
+                <mat-icon>search</mat-icon>
+                <span>Scan for Components</span>
+              </button>
+            </div>
+
+            <div *ngIf="componentsLoaded" class="components-selection">
+              <div class="component-list">
+                <div
+                  *ngFor="let component of availableComponents"
+                  class="component-item"
+                >
+                  <input
+                    type="checkbox"
+                    [id]="'component-' + component.id"
+                    [checked]="isComponentSelected(component.id)"
+                    (change)="toggleComponent(component.id)"
+                  />
+                  <label [for]="'component-' + component.id">{{
+                    component.name
+                  }}</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Generation History (отображается всегда) -->
       <div class="generation-history card">
         <h3>Generation History</h3>
         <div class="help-text status-explanation">

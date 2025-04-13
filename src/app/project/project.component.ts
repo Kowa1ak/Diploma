@@ -6,7 +6,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ProjectDashboardComponent } from './dashboard/project-dashboard.component';
-import { ProjectInputsComponent } from './inputs/project-inputs.component';
+// Удален неиспользуемый импорт ProjectInputsComponent
 import { ProjectGenerateComponent } from './generate/project-generate.component';
 import { ProjectTestCasesComponent } from './test-cases/project-test-cases.component';
 import { ProjectSettingsComponent } from './settings/project-settings.component';
@@ -22,7 +22,7 @@ import { TestFilterService } from './shared/test-filter.service';
     MatIconModule,
     MatTabsModule,
     ProjectDashboardComponent,
-    ProjectInputsComponent,
+    // Удален неиспользуемый импорт ProjectInputsComponent
     ProjectGenerateComponent,
     ProjectTestCasesComponent,
     ProjectSettingsComponent,
@@ -60,17 +60,15 @@ export class ProjectComponent implements OnInit {
           case 'dashboard':
             this.activeTab = 0;
             break;
-          case 'inputs':
+          // Inputs вкладка больше не существует
+          case 'generate':
             this.activeTab = 1;
             break;
-          case 'generate':
+          case 'test-cases':
             this.activeTab = 2;
             break;
-          case 'test-cases':
-            this.activeTab = 3;
-            break;
           case 'settings':
-            this.activeTab = 4;
+            this.activeTab = 3;
             break;
         }
       }
@@ -87,13 +85,13 @@ export class ProjectComponent implements OnInit {
     this.activeTab = tabIndex;
 
     // Если пользователь переходит на вкладку test-cases, убеждаемся что фильтры учтены
-    if (tabIndex === 3) {
-      // 3 - индекс вкладки test-cases
+    if (tabIndex === 2) {
+      // Обновлено с 3 на 2, т.к. Inputs вкладка удалена
       // Здесь можно добавить дополнительную логику при необходимости
     }
   }
 
-  // Добавим метод для обработки изменений вкладки
+  // Обработка изменений вкладки (устранена дублирующаяся реализация)
   onTabChange(index: number): void {
     // Если переходим на дашборд (index 0), очищаем путь к URL от параметров
     if (index === 0) {

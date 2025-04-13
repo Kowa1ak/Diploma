@@ -4,6 +4,10 @@
   margin: 0 auto;
   padding: 100px;
   background-color: #f5f7fa;
+  overflow-y: auto; 
+  /* Фиксируем высоту с учетом паддингов: 100px сверху и снизу */
+  height: calc(100vh - 200px);
+  overflow-y: scroll;  /* Принудительно включаем вертикальную прокрутку */
 }
 
 /* Заголовок тест-кейса */

@@ -21,10 +21,18 @@ export class ProjectGenerateComponent {
 
   // Конфигурация генерации
   analyzeCode: boolean = true;
-  analyzeRequirements: boolean = true;
+  useGit: boolean = false; // Новый переключатель для использования Git
   generationStrategy: string = 'balanced';
   selectedComponents: string[] = [];
-  testCaseCount: number = 5; // значение по умолчанию
+  testCaseCount: number = 1; // Изменено с 5 на 1
+
+  // Переменные для Git
+  gitRepository: string = '';
+  gitBranch: string = 'main';
+  gitConnected: boolean = false;
+
+  // Переменные для требований
+  requirements: string = '';
 
   // Состояние компонентов
   componentsLoaded: boolean = false;
@@ -111,24 +119,36 @@ export class ProjectGenerateComponent {
 
   startGeneration() {
     // Проверка входных данных
-    if (!this.analyzeCode && !this.analyzeRequirements) {
-      alert(
-        'Please select at least one source for analysis (Code or Requirements)'
-      );
+    if (!this.analyzeCode) {
+      alert('Please select Source Code analysis');
       return;
     }
 
-    // Логика для запуска генерации с учетом выбранного количества тест-кейсов
+    // Ограничиваем количество тест-кейсов до 10
+    if (this.testCaseCount > 10) {
+      this.testCaseCount = 10;
+    } else if (this.testCaseCount < 1) {
+      this.testCaseCount = 1;
+    }
+
+    // Проверка на необходимость подключения Git
+    if (this.analyzeCode && this.useGit && !this.gitConnected) {
+      alert('Please connect to Git repository first');
+      return;
+    }
+
+    // Логика для запуска генерации
     alert(`Starting generation with configuration:
       Analyze Code: ${this.analyzeCode}
-      Analyze Requirements: ${this.analyzeRequirements}
+      Use Git: ${this.useGit}
+      Analyze Requirements: Always enabled
       Strategy: ${this.generationStrategy}
       Components: ${
         this.selectedComponents.length
           ? this.selectedComponents.join(', ')
           : 'All'
       }
-      Test Case Count: approximately ${this.testCaseCount}`);
+      Test Case Count: ${this.testCaseCount}`);
 
     // Здесь бы шел вызов API для запуска процесса генерации
   }
@@ -150,5 +170,28 @@ export class ProjectGenerateComponent {
         (run) => run.id !== runId
       );
     }
+  }
+
+  // Методы для работы с Git-репозиторием
+  connectToGit() {
+    if (!this.gitRepository) {
+      alert('Please enter a Git repository URL');
+      return;
+    }
+
+    // Здесь была бы логика для соединения с Git
+    setTimeout(() => {
+      this.gitConnected = true;
+    }, 1000);
+  }
+
+  disconnectGit() {
+    this.gitConnected = false;
+    this.gitRepository = '';
+    this.gitBranch = 'main';
+  }
+
+  saveRequirements() {
+    alert('Requirements saved successfully!');
   }
 }
