@@ -7,7 +7,7 @@
       <!-- Requirements (верхняя карточка) -->
       <div class="requirements-config card">
         <h3>Requirements</h3>
-        <div class="form-group">
+        <div class="form-group requirements-input">
           <label for="requirements">Project Requirements:</label>
           <textarea
             id="requirements"
@@ -18,8 +18,26 @@
           ></textarea>
         </div>
         <div class="form-actions">
-          <button class="action-button primary" (click)="saveRequirements()">
-            <mat-icon>save</mat-icon> Save Requirements
+          <button
+            class="action-button primary bordered"
+            (click)="saveRequirements()"
+          >
+            <mat-icon>save</mat-icon>
+            Save Requirements
+          </button>
+          <input
+            type="file"
+            #reqFileInput
+            id="requirementsFile"
+            (change)="uploadRequirementsFile($event)"
+            hidden
+          />
+          <button
+            class="action-button secondary"
+            (click)="reqFileInput.click()"
+          >
+            <mat-icon>upload_file</mat-icon>
+            Upload File
           </button>
         </div>
       </div>
@@ -253,7 +271,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let run of generationRuns">
-                <td>{{ run.timestamp | date : "short" }}</td>
+                <td>{{ run.timestamp | date : "dd.MM.yyyy HH:mm" }}</td>
                 <td>
                   <span
                     class="status-badge"
@@ -268,6 +286,14 @@
                     class="icon-button"
                     *ngIf="run.status === 'Completed'"
                     title="View Results"
+                  >
+                    <mat-icon>visibility</mat-icon>
+                  </button>
+                  <button
+                    class="icon-button disabled"
+                    *ngIf="run.status === 'Failed'"
+                    title="Generation failed, cannot view results"
+                    disabled
                   >
                     <mat-icon>visibility</mat-icon>
                   </button>
