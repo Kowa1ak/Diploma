@@ -1,5 +1,5 @@
 <div class="tab-content">
-  <h2>Project Settings: {{ project.name }}</h2>
+  <h2>Project Settings</h2>
 
   <div class="project-settings card" *ngIf="editedProject">
     <div class="form-group">
@@ -22,19 +22,59 @@
       ></textarea>
     </div>
 
-    <div class="form-group">
-      <label for="language">Primary Programming Language:</label>
-      <select
-        id="language"
-        [(ngModel)]="editedProject.primaryLanguage"
-        class="form-control"
-      >
-        <option value="TypeScript">TypeScript</option>
-        <option value="JavaScript">JavaScript</option>
-        <option value="Python">Python</option>
-        <option value="Java">Java</option>
-        <option value="C#">C#</option>
-      </select>
+    <div class="form-row">
+      <div class="half-width">
+        <div class="form-group">
+          <label>Primary Programming Language:</label>
+          <div class="filter-dropdown primary-lang-dropdown">
+            <button class="filter-button" (click)="toggleLanguageDropdown()">
+              <span class="filter-label">{{
+                primaryLanguage || "Select Language"
+              }}</span>
+              <mat-icon>{{
+                languageDropdownOpen ? "expand_less" : "expand_more"
+              }}</mat-icon>
+            </button>
+            <div class="dropdown-menu" *ngIf="languageDropdownOpen">
+              <div
+                class="dropdown-item"
+                *ngFor="let lang of languages"
+                (click)="selectLanguage(lang)"
+              >
+                {{ lang }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="half-width">
+        <div class="form-group status-selector">
+          <label>Project Status:</label>
+          <div class="status-options">
+            <span
+              class="status-box Active"
+              [class.selected]="projectStatus === 'Active'"
+              (click)="projectStatus = 'Active'"
+            >
+              Active
+            </span>
+            <span
+              class="status-box Completed"
+              [class.selected]="projectStatus === 'Completed'"
+              (click)="projectStatus = 'Completed'"
+            >
+              Completed
+            </span>
+            <span
+              class="status-box Paused"
+              [class.selected]="projectStatus === 'Paused'"
+              (click)="projectStatus = 'Paused'"
+            >
+              Paused
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="form-actions">
@@ -43,6 +83,33 @@
       </button>
       <button class="action-button" (click)="cancelChanges()">Cancel</button>
     </div>
+  </div>
+
+  <div class="code-uploads card">
+    <h3>Uploaded Code</h3>
+    <button
+      class="action-button primary upload-button"
+      (click)="uploadArchive()"
+    >
+      <mat-icon>cloud_upload</mat-icon>
+      Upload Archive
+    </button>
+    <ul class="archive-list">
+      <li
+        *ngFor="let arch of uploadedArchives; let i = index"
+        class="archive-item"
+      >
+        <div class="archive-details">
+          <span class="archive-name">{{ arch.name }}</span>
+          <span class="archive-info"
+            >{{ arch.date | date : "shortDate" }} – {{ arch.size }}</span
+          >
+        </div>
+        <button class="icon-button" (click)="deleteArchive(i)" title="Delete">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </li>
+    </ul>
   </div>
 
   <div class="danger-zone card">

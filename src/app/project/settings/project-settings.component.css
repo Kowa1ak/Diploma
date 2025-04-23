@@ -1,6 +1,6 @@
 /* Tab Content */
 .tab-content {
-  padding: 20px 0;
+  padding: 20px 10px;
   height: auto; /* Позволяет контенту определять высоту */
   overflow: visible; /* Предотвращает принудительный скролл */
   min-height: 100%;
@@ -55,11 +55,48 @@ h3 {
   display: flex;
   gap: 10px;
 }
+.form-group input {
+  border-radius: 15px;
+  border: 1px solid #ddd;
+  background-color: transparent;
+  box-sizing: border-box;
+}
+.form-group textarea {
+  border-radius: 15px;
+  border: 1px solid #ddd;
+  background-color: transparent;
+  box-sizing: border-box;
+  resize: none; /* Отключаем ручное изменение размера */
+  min-height: 150px;
+}
+
+/* Размещаем два поля в одну строку по 50% */
+.form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.half-width {
+  flex: 1;
+  min-width: 0; /* предотвращает переполнение */
+}
 
 /* Settings styles */
 .danger-zone {
   background: #fdeded;
   border-left: 4px solid #e53935;
+}
+.danger-zone .action-button {
+  padding: 5px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.danger-zone .action-button mat-icon {
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .danger-zone h3 {
@@ -104,4 +141,164 @@ h3 {
 .action-button:hover {
   opacity: 0.9;
   transform: translateY(-1px);
+}
+
+/* Status Selector */
+.status-selector .status-options {
+  display: flex;
+  gap: 10px;
+}
+
+.status-selector .status-box {
+  padding: 8px 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  background: transparent;
+  border: 1px solid currentColor;
+  color: black;
+}
+
+.status-box.Active {
+  background-color: #a5d6a7; /* Светло-зеленый */
+  color: #2e7d32;
+}
+
+.status-box.Completed {
+  background-color: #bdbdbd; /* Светло-серый */
+  color: #424242;
+}
+
+.status-box.Paused {
+  background-color: #ffe082; /* Светло-желтый */
+  color: #f9a825;
+}
+
+.status-box.selected {
+  box-shadow: none !important;
+  border: 2px solid currentColor;
+  background-color: black ;
+  color: #fff;
+}
+
+/* Выбранный статус — полностью закрашен чёрным, текст белый */
+.status-selector .status-box.selected {
+  background-color: #000 !important;
+  color: #fff !important;
+  border-color: #000 !important;
+}
+
+/* Primary Language dropdown */
+.primary-lang-dropdown {
+  position: relative;
+  width: 100%;
+}
+
+.primary-lang-dropdown .filter-button {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    background: #fff;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;        /* растягиваем кнопку на всю ширину контейнера */
+    text-align: left;
+}
+
+.primary-lang-dropdown .dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
+.primary-lang-dropdown .dropdown-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.primary-lang-dropdown .dropdown-item:hover {
+  background: #f0f0f0;
+}
+
+/* Code Uploads */
+.code-uploads {
+  margin-bottom: 30px;
+}
+
+.code-uploads h3 {
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+}
+
+.upload-button {
+  margin-bottom: 10px;
+}
+.upload-button mat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.archive-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.archive-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.archive-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.archive-name {
+  font-weight: 500;
+}
+
+.archive-info {
+  color: #666;
+  font-size: 0.9rem;
+  margin-top: 2px;
+}
+.icon-button {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+}
+.icon-button:hover {
+  background-color: black;
+  color: white;
+}
+.code-uploads .upload-button {
+  padding: 5px 12px;
 }
