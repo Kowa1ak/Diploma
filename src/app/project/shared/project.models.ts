@@ -57,6 +57,8 @@ export interface TestCase {
   generatedAt?: Date;
   relatedRequirements?: string[];
   aiConfidence?: number;
+  // Добавлено для чекбоксов в UI
+  selected?: boolean;
 }
 
 export interface GenerationRun {

@@ -5,8 +5,9 @@ import {
   OnInit,
   OnDestroy,
   ChangeDetectorRef,
+  HostListener,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
@@ -30,6 +31,7 @@ import {
   templateUrl: './project-test-cases.component.html',
   styleUrls: ['./project-test-cases.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [DatePipe],
 })
 export class ProjectTestCasesComponent implements OnInit, OnDestroy {
   @Input() project!: Project;
@@ -116,10 +118,31 @@ export class ProjectTestCasesComponent implements OnInit, OnDestroy {
     },
   ];
 
+  // Варианты фильтров
+  types = ['Unit', 'Integration', 'E2E'];
+  componentsList = ['Auth', 'Dashboard', 'Settings'];
+  statuses = ['New', 'Reviewed', 'Failed', 'Completed'];
+  runsList = ['Last 24h', 'Last 7 Days', 'Last 30 Days'];
+
+  // Состояние раскрытия dropdown
+  dropdownOpen = {
+    type: false,
+    component: false,
+    status: false,
+    run: false,
+  };
+
+  // Выбранные значения
+  selectedType = 'All Types';
+  selectedComponent = 'All Components';
+  selectedStatus = 'All Status';
+  selectedRun = 'All Runs';
+
   constructor(
     private route: ActivatedRoute,
     private filterService: TestFilterService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private datePipe: DatePipe
   ) {}
 
   ngOnInit(): void {
@@ -222,5 +245,79 @@ export class ProjectTestCasesComponent implements OnInit, OnDestroy {
   exportJSON() {
     // Logic to export as JSON
     alert('Exporting test cases as JSON');
+  }
+
+  toggleDropdown(key: keyof typeof this.dropdownOpen): void {
+    // закрываем все остальные
+    (
+      Object.keys(this.dropdownOpen) as Array<keyof typeof this.dropdownOpen>
+    ).forEach((k) => {
+      if (k !== key) this.dropdownOpen[k] = false;
+    });
+    this.dropdownOpen[key] = !this.dropdownOpen[key];
+    this.cdr.markForCheck();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.filter-dropdown')) {
+      // закрываем все dropdown
+      Object.keys(this.dropdownOpen).forEach(
+        (k) => (this.dropdownOpen[k as keyof typeof this.dropdownOpen] = false)
+      );
+      this.cdr.markForCheck();
+    }
+  }
+
+  selectFilter(key: keyof typeof this.dropdownOpen, value: string): void {
+    this.dropdownOpen[key] = false;
+    switch (key) {
+      case 'type':
+        this.selectedType = value;
+        this.typeFilter = value === 'All Types' ? '' : value;
+        break;
+      case 'component':
+        this.selectedComponent = value;
+        this.componentFilter = value === 'All Components' ? '' : value;
+        break;
+      case 'status':
+        this.selectedStatus = value;
+        this.statusFilter = value === 'All Status' ? '' : value;
+        break;
+      case 'run':
+        const runObj = this.generationRuns.find((r) => r.id === value);
+        if (runObj) {
+          this.selectedRun = `${this.datePipe.transform(
+            runObj.timestamp,
+            'M/d/yy, h:mm a'
+          )} (${runObj.testCasesCount} tests)`;
+          this.generationRunFilter = runObj.id;
+        } else {
+          this.selectedRun = 'All Runs';
+          this.generationRunFilter = '';
+        }
+        this.onFilterChange();
+        break;
+    }
+    this.cdr.markForCheck();
+  }
+
+  // Выбирает все или снимает выбор (если передан event с флагом)
+  selectAll(event?: Event): void {
+    const checked = event ? (event.target as HTMLInputElement).checked : true;
+    this.testCases.forEach((tc) => (tc.selected = checked));
+    this.cdr.markForCheck();
+  }
+
+  // Удаляет все выбранные тест-кейсы
+  deleteSelected(): void {
+    this.testCases = this.testCases.filter((tc) => !tc.selected);
+    this.cdr.markForCheck();
+  }
+
+  // Проверка, есть ли выбранные тест-кейсы
+  get hasSelected(): boolean {
+    return this.testCases.some((tc) => tc.selected);
   }
 }

@@ -14,53 +14,130 @@
       </div>
 
       <div class="filter-group">
-        <select [(ngModel)]="typeFilter" class="form-control">
-          <option value="">All Types</option>
-          <option value="Positive">Positive</option>
-          <option value="Negative">Negative</option>
-          <option value="Boundary">Boundary</option>
-          <option value="Security">Security</option>
-          <option value="Performance">Performance</option>
-        </select>
+        <div class="filter-dropdown">
+          <button class="filter-button" (click)="toggleDropdown('type')">
+            <span class="filter-label">{{ selectedType }}</span>
+            <mat-icon>{{
+              dropdownOpen.type ? "expand_less" : "expand_more"
+            }}</mat-icon>
+          </button>
+          <div class="dropdown-menu" *ngIf="dropdownOpen.type">
+            <div
+              class="dropdown-item"
+              (click)="selectFilter('type', 'All Types')"
+            >
+              All Types
+            </div>
+            <div
+              class="dropdown-item"
+              *ngFor="let t of types"
+              (click)="selectFilter('type', t)"
+            >
+              {{ t }}
+            </div>
+          </div>
+        </div>
 
-        <select [(ngModel)]="componentFilter" class="form-control">
-          <option value="">All Components</option>
-          <option value="Authentication">Authentication</option>
-          <option value="User Profile">User Profile</option>
-          <option value="API">API</option>
-        </select>
+        <div class="filter-dropdown">
+          <button class="filter-button" (click)="toggleDropdown('component')">
+            <span class="filter-label">{{ selectedComponent }}</span>
+            <mat-icon>{{
+              dropdownOpen.component ? "expand_less" : "expand_more"
+            }}</mat-icon>
+          </button>
+          <div class="dropdown-menu" *ngIf="dropdownOpen.component">
+            <div
+              class="dropdown-item"
+              (click)="selectFilter('component', 'All Components')"
+            >
+              All Components
+            </div>
+            <div
+              class="dropdown-item"
+              *ngFor="let c of componentsList"
+              (click)="selectFilter('component', c)"
+            >
+              {{ c }}
+            </div>
+          </div>
+        </div>
 
-        <select [(ngModel)]="statusFilter" class="form-control">
-          <option value="">All Status</option>
-          <option value="New">New</option>
-          <option value="Reviewed">Reviewed</option>
-          <option value="Needs Revision">Needs Revision</option>
-        </select>
+        <div class="filter-dropdown">
+          <button class="filter-button" (click)="toggleDropdown('status')">
+            <span class="filter-label">{{ selectedStatus }}</span>
+            <mat-icon>{{
+              dropdownOpen.status ? "expand_less" : "expand_more"
+            }}</mat-icon>
+          </button>
+          <div class="dropdown-menu" *ngIf="dropdownOpen.status">
+            <div
+              class="dropdown-item"
+              (click)="selectFilter('status', 'All Status')"
+            >
+              All Status
+            </div>
+            <div
+              class="dropdown-item"
+              *ngFor="let s of statuses"
+              (click)="selectFilter('status', s)"
+            >
+              {{ s }}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="control-row">
       <div class="generation-selector">
         <label>Generation Run:</label>
-        <select
-          [(ngModel)]="generationRunFilter"
-          (ngModelChange)="onFilterChange()"
-          class="form-control"
-        >
-          <option value="">All Runs</option>
-          <option *ngFor="let run of generationRuns" [value]="run.id">
-            {{ run.timestamp | date : "short" }} ({{ run.testCasesCount }}
-            tests)
-          </option>
-        </select>
+        <div class="filter-dropdown">
+          <button class="filter-button" (click)="toggleDropdown('run')">
+            <span class="filter-label">{{ selectedRun }}</span>
+            <mat-icon>{{
+              dropdownOpen.run ? "expand_less" : "expand_more"
+            }}</mat-icon>
+          </button>
+          <div class="dropdown-menu" *ngIf="dropdownOpen.run">
+            <div class="dropdown-item" (click)="selectFilter('run', '')">
+              All Runs
+            </div>
+            <div
+              class="dropdown-item"
+              *ngFor="let run of generationRuns"
+              (click)="selectFilter('run', run.id)"
+            >
+              {{ run.timestamp | date : "M/d/yy, h:mm a" }} ({{
+                run.testCasesCount
+              }}
+              tests)
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="export-buttons">
-        <button class="action-button" (click)="exportCSV()">
+        <button
+          class="action-button"
+          (click)="exportCSV()"
+          [disabled]="!hasSelected"
+        >
           <mat-icon>file_download</mat-icon> Export as CSV
         </button>
-        <button class="action-button" (click)="exportJSON()">
+        <button
+          class="action-button"
+          (click)="exportJSON()"
+          [disabled]="!hasSelected"
+        >
           <mat-icon>code</mat-icon> Export as JSON
+        </button>
+        <button
+          class="action-button danger"
+          *ngIf="hasSelected"
+          (click)="deleteSelected()"
+        >
+          <mat-icon>delete</mat-icon>
+          Delete Selected
         </button>
       </div>
     </div>
@@ -70,8 +147,11 @@
     <table>
       <thead>
         <tr>
+          <th class="select-col">
+            <input type="checkbox" (change)="selectAll($event)" />
+          </th>
           <th>ID</th>
-          <th>Name/Description</th>
+          <th>Name</th>
           <th>Type</th>
           <th>Component</th>
           <th>Priority</th>
@@ -81,6 +161,9 @@
       </thead>
       <tbody>
         <tr *ngFor="let testCase of filteredTestCases">
+          <td class="select-col">
+            <input type="checkbox" [(ngModel)]="testCase.selected" />
+          </td>
           <td>{{ testCase.id }}</td>
           <td class="test-name">
             <a [routerLink]="['/project/test-case', testCase.id]">{{
@@ -119,13 +202,6 @@
               title="View Details"
             >
               <mat-icon>visibility</mat-icon>
-            </button>
-            <button
-              class="icon-button"
-              (click)="editTestCase(testCase.id)"
-              title="Edit"
-            >
-              <mat-icon>edit</mat-icon>
             </button>
             <button
               class="icon-button"

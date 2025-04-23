@@ -1,6 +1,6 @@
 /* Tab Content */
 .tab-content {
-  padding: 20px 0;
+  padding: 20px 10px;
   height: auto;
   min-height: 100%;
   box-sizing: border-box;
@@ -33,16 +33,23 @@ h2 {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 20px;
 }
 
 .search-box {
+  box-sizing: border-box;
   position: relative;
   flex: 1;
   min-width: 200px;
 }
 
 .search-box input {
+  border-radius: 15px;
+  background-color: transparent;
+  border: 1px solid #ddd;
+  color: #666;
+  box-sizing: border-box;
+  width: 100%;
   padding-left: 35px;
 }
 
@@ -77,6 +84,80 @@ h2 {
 .export-buttons {
   display: flex;
   gap: 10px;
+}
+
+/* Общие стили для фильтров */
+.filter-dropdown {
+  position: relative;
+  display: inline-block; /* ширина зависит от содержимого (кнопки) */
+  width: 200px;       /* одинаковая ширина всех фильтров */
+}
+
+.filter-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  background: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;        /* растягиваем кнопку на всю ширину контейнера */
+  text-align: left;
+}
+
+.filter-button mat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  vertical-align: middle;
+}
+
+/* Выпадающее меню */
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 10;
+  width: max-content;
+  min-width: 150px;
+  padding: 10px;
+}
+.dropdown-item {
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 5px 12px;
+}
+.dropdown-item:hover {
+  background: #f0f0f0;
+}
+
+.filter-dropdown .dropdown-menu {
+  position: absolute;
+  width: 100%;      /* совпадает по ширине с кнопкой */
+  box-sizing: border-box;
+}
+
+/* Удаляем перекрытие */
+.filter-dropdown + .filter-dropdown {
+  margin-left: 10px;
+}
+
+/* Увеличенная ширина только для фильтра Generation Run */
+.generation-selector .filter-dropdown {
+  width: 250px;      /* шире остальных кнопок */
+}
+.generation-selector .filter-dropdown .filter-button,
+.generation-selector .filter-dropdown .dropdown-menu {
+  width: 250px;      /* и само выпадающее меню той же ширины */
 }
 
 /* Table styles */
@@ -198,13 +279,21 @@ th {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-decoration: none;
+}
+
+/* В колонке Name/Description делаем ссылку неактивной чёрным текстом */
+.test-name a {
+  color: #333;
+  text-decoration: none;
+  cursor: default;
 }
 
 /* Button styles */
 .action-button {
   padding: 8px 16px;
   border: none;
-  border-radius: 4px;
+  border-radius: 15px;
   background: #f0f0f0;
   color: #333;
   font-size: 0.9rem;
@@ -216,6 +305,9 @@ th {
 }
 
 .action-button mat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-right: 5px;
   font-size: 18px;
 }
@@ -240,4 +332,42 @@ th {
 
 .icon-button:hover {
   background: #f0f0f0;
+}
+
+/* Bulk action buttons */
+.bulk-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.action-button.danger {
+  background: #e53935;
+  color: #fff;
+}
+
+/* Стили для отключённых кнопок */
+.action-button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Чекбокс-колонка */
+.select-col {
+  width: 40px;
+  text-align: center;
+}
+
+/* Выравниваем чекбоксы */
+.select-col input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+}
+
+/* Отключаем цветные стили для колонки Type, делаем текст чёрным */
+.test-cases-table td:nth-child(4) .badge {
+  background: transparent !important;
+  color: #000 !important;
+  box-shadow: none !important;
 }
