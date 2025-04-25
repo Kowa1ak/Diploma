@@ -6,16 +6,20 @@ import {
   ChangeDetectionStrategy,
   OnInit,
   HostListener,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { Project } from '../shared/project.models';
+import { Project, ProjectStatus } from '../shared/project.models';
+import { NotificationService } from '../../shared/notification/notification.service';
+import { Router } from '@angular/router';
+import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-project-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule],
+  imports: [CommonModule, FormsModule, MatIconModule, ConfirmDialogComponent],
   templateUrl: './project-settings.component.html',
   styleUrls: ['./project-settings.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,7 +31,7 @@ export class ProjectSettingsComponent implements OnInit {
   @Output() projectDeleted = new EventEmitter<string>();
 
   editedProject: Project | null = null;
-  projectStatus: 'Active' | 'Completed' | 'Paused' = 'Active';
+  projectStatus: ProjectStatus = ProjectStatus.Active;
 
   // Primary Programming Language dropdown
   languages = ['TypeScript', 'JavaScript', 'Python', 'Java', 'C#', 'Go'];
@@ -35,6 +39,20 @@ export class ProjectSettingsComponent implements OnInit {
   languageDropdownOpen = false;
 
   uploadedArchives: { name: string; date: Date; size: string }[] = [];
+
+  settingsChanged = false;
+  showDialog = false;
+  dialogMessage = '';
+  dialogConfirm!: () => void;
+
+  // Экспортируем enum в шаблон
+  ProjectStatusEnum = ProjectStatus;
+
+  constructor(
+    private notification: NotificationService,
+    private router: Router,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   toggleLanguageDropdown(): void {
     this.languageDropdownOpen = !this.languageDropdownOpen;
@@ -53,6 +71,7 @@ export class ProjectSettingsComponent implements OnInit {
   selectLanguage(lang: string): void {
     this.primaryLanguage = lang;
     this.languageDropdownOpen = false;
+    this.onSettingChange();
   }
 
   uploadArchive(): void {
@@ -66,12 +85,21 @@ export class ProjectSettingsComponent implements OnInit {
         date: new Date(),
         size: this.formatSize(file.size),
       });
+      this.onSettingChange();
     };
     input.click();
   }
 
   deleteArchive(index: number): void {
-    this.uploadedArchives.splice(index, 1);
+    const arch = this.uploadedArchives[index];
+    this.dialogMessage = `Delete archive "${arch.name}"?`;
+    this.dialogConfirm = () => {
+      this.uploadedArchives.splice(index, 1);
+      this.showDialog = false;
+      this.notification.success('Archive deleted');
+      this.cdr.markForCheck();
+    };
+    this.showDialog = true;
   }
 
   private formatSize(bytes: number): string {
@@ -82,6 +110,7 @@ export class ProjectSettingsComponent implements OnInit {
   ngOnChanges() {
     // Create a copy of the project data to edit
     this.editedProject = { ...this.project };
+    this.projectStatus = this.editedProject.status;
   }
 
   // Инициализируем после загрузки проекта
@@ -89,19 +118,21 @@ export class ProjectSettingsComponent implements OnInit {
     this.primaryLanguage = this.editedProject?.primaryLanguage || '';
   }
 
-  saveProjectSettings() {
-    // Сохраняем primaryLanguage в объект проекта
+  saveProjectSettings(): void {
     if (this.editedProject) {
+      // Сохраняем статус в объект проекта
+      this.editedProject.status = this.projectStatus;
       this.editedProject.primaryLanguage = this.primaryLanguage;
       this.projectUpdated.emit(this.editedProject);
-      alert('Project settings saved.');
+      this.settingsChanged = false;
+      this.notification.success('Settings saved successfully');
     }
   }
 
-  cancelChanges() {
-    // Reset to original values
+  cancelChanges(): void {
     this.editedProject = { ...this.project };
-    alert('Changes canceled.');
+    this.projectStatus = this.editedProject.status; // восстановить статус
+    this.settingsChanged = false;
   }
 
   deleteProject() {
@@ -109,8 +140,41 @@ export class ProjectSettingsComponent implements OnInit {
       'Type the project name to confirm deletion: ' + this.project.name
     );
     if (confirmName === this.project.name) {
-      this.projectDeleted.emit(this.project.id);
-      alert('Project will be deleted.');
+      this.dialogMessage = 'Are you sure you want to delete this project?';
+      this.dialogConfirm = () => {
+        this.showDialog = false;
+        this.notification.info('Project deleted');
+        this.router.navigate(['/all-project']);
+      };
+      this.showDialog = true;
     }
+  }
+
+  onSettingChange(): void {
+    this.settingsChanged = true;
+  }
+
+  uploadCode(event: Event): void {
+    // ...обработка загрузки...
+    this.notification.success('Code uploaded successfully');
+    this.onSettingChange();
+  }
+
+  navigateTo(path: string): void {
+    if (this.settingsChanged) {
+      this.notification.error('Please save changes before navigating');
+      return;
+    }
+    this.router.navigate([path]);
+  }
+
+  confirmDeleteProject(): void {
+    this.dialogMessage = 'Are you sure you want to delete this project?';
+    this.dialogConfirm = () => {
+      this.showDialog = false;
+      this.notification.info('Project deleted');
+      this.router.navigate(['/all-project']);
+    };
+    this.showDialog = true;
   }
 }

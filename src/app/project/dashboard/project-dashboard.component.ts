@@ -138,12 +138,14 @@ export class ProjectDashboardComponent implements AfterViewInit {
     }
   }
 
-  onStartNewGeneration() {
-    this.startGeneration.emit();
+  // При клике переходим на вкладку Generate
+  onStartNewGeneration(): void {
+    this.router.navigate(['/project'], { queryParams: { tab: 'generate' } });
   }
 
-  onManageInputs() {
-    this.manageInputs.emit();
+  // При клике переходим на вкладку Generate (управление Inputs)
+  onManageInputs(): void {
+    this.router.navigate(['/project'], { queryParams: { tab: 'settings' } });
   }
 
   onViewAllTestCases(): void {

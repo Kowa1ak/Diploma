@@ -24,6 +24,7 @@ import {
   transition,
   animate,
 } from '@angular/animations';
+import { NotificationService } from '../shared/notification/notification.service';
 
 @Component({
   selector: 'app-new-project',
@@ -50,7 +51,14 @@ export class NewProjectComponent implements OnInit, OnDestroy, AfterViewInit {
   uploadError: string = '';
   containerState: string = 'expanded';
 
-  programmingLanguages = ['Java', 'Python', 'JavaScript', 'C#', 'Go'];
+  programmingLanguages = [
+    'Without Code',
+    'Java',
+    'Python',
+    'JavaScript',
+    'C#',
+    'Go',
+  ];
   sourceCodeMethods = [
     { value: 'manual', label: 'Manual Setup / No Code Analysis' },
     { value: 'git', label: 'Link Git Repository' },
@@ -63,7 +71,8 @@ export class NewProjectComponent implements OnInit, OnDestroy, AfterViewInit {
     private fb: FormBuilder,
     private router: Router,
     private el: ElementRef,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private notificationService: NotificationService
   ) {
     this.projectForm = this.fb.group({
       projectName: ['', [Validators.required, Validators.maxLength(100)]],
@@ -146,15 +155,27 @@ export class NewProjectComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onSubmit(): void {
     if (this.projectForm.invalid) {
+      this.notificationService.error(
+        'Пожалуйста, заполните все обязательные поля.'
+      );
       return;
     }
+
     const projectName = this.projectForm.value.projectName;
     const projectId = Math.floor(Math.random() * 1000);
-    alert(`Project '${projectName}' created successfully!`);
+    this.notificationService.success(`Проект "${projectName}" успешно создан.`);
     this.router.navigate([`/project/${projectId}/dashboard`]);
   }
 
   onCancel(): void {
     this.router.navigate(['/home']);
+  }
+
+  goHome(): void {
+    this.router.navigate(['/home']);
+  }
+
+  goRecentProject(): void {
+    this.router.navigate(['/project']);
   }
 }

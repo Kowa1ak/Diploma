@@ -1,7 +1,9 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
+import { NotificationService } from '../shared/notification/notification.service';
 
 enum ProjectStatus {
   Active = 'Active',
@@ -21,12 +23,12 @@ interface Project {
 @Component({
   selector: 'app-all-project',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatIconModule],
+  imports: [CommonModule, RouterModule, MatIconModule, ConfirmDialogComponent],
   templateUrl: './all-project.component.html',
   styleUrls: ['./all-project.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AllProjectComponent {
+export class AllProjectComponent implements OnInit {
   public ProjectStatus = ProjectStatus; // Make the enum accessible in the template
   projects: Project[] = [
     {
@@ -89,6 +91,18 @@ export class AllProjectComponent {
   public selectedSort: string = '';
   public selectedStatus: ProjectStatus | '' = '';
 
+  showDialog = false;
+  dialogMessage = '';
+  dialogConfirm!: () => void;
+
+  constructor(private notification: NotificationService) {}
+
+  ngOnInit() {}
+
+  loadProjects() {
+    // Удалён вызов к сервису. Используется статический массив projects.
+  }
+
   get filteredProjects(): Project[] {
     let projs = this.projects;
     if (this.searchTerm) {
@@ -148,12 +162,8 @@ export class AllProjectComponent {
   }
 
   onDeleteProject(project: Project): void {
-    if (confirm(`Are you sure you want to delete project: ${project.name}?`)) {
-      this.projects = this.projects.filter((p) => p.id !== project.id);
-      if (this.currentPage > this.totalPages) {
-        this.currentPage = this.totalPages;
-      }
-    }
+    // заменили стандартный confirm на кастомный диалог
+    this.confirmDelete(project);
   }
 
   toggleFilterPanel(): void {
@@ -195,5 +205,15 @@ export class AllProjectComponent {
       this.selectedSort !== '' ||
       this.selectedStatus !== ''
     );
+  }
+
+  confirmDelete(project: Project) {
+    this.dialogMessage = `Delete project "${project.name}"?`;
+    this.dialogConfirm = () => {
+      this.projects = this.projects.filter((p) => p.id !== project.id);
+      this.showDialog = false;
+      this.notification.success(`Project "${project.name}" deleted.`);
+    };
+    this.showDialog = true;
   }
 }

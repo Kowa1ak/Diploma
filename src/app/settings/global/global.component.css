@@ -130,9 +130,6 @@ input:checked + .slider:before {
   gap: 20px; /* расстояние между секциями */
 }
 
-.global-columns .section {
-  /* flex: 1;  удалено */
-}
 
 /* Кнопочная группа для API ключей */
 .api-buttons {

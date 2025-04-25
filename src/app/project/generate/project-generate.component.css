@@ -329,6 +329,10 @@ th {
   font-size: 16px;
 }
 
+.action-button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
 .form-actions {
 

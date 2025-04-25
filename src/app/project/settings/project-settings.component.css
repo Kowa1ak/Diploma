@@ -143,6 +143,11 @@ h3 {
   transform: translateY(-1px);
 }
 
+.action-button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* Status Selector */
 .status-selector .status-options {
   display: flex;

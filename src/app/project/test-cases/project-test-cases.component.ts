@@ -23,11 +23,19 @@ import {
   TestCaseReviewStatus,
   GenerationRun,
 } from '../shared/project.models';
+import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
+import { NotificationService } from '../../shared/notification/notification.service';
 
 @Component({
   selector: 'app-project-test-cases',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, RouterModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatIconModule,
+    RouterModule,
+    ConfirmDialogComponent,
+  ],
   templateUrl: './project-test-cases.component.html',
   styleUrls: ['./project-test-cases.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -138,11 +146,18 @@ export class ProjectTestCasesComponent implements OnInit, OnDestroy {
   selectedStatus = 'All Status';
   selectedRun = 'All Runs';
 
+  // для диалога
+  showDialog = false;
+  dialogMessage = '';
+  dialogItems: string[] = []; // <– добавлено
+  dialogConfirm!: () => void;
+
   constructor(
     private route: ActivatedRoute,
     private filterService: TestFilterService,
     private cdr: ChangeDetectorRef,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -151,6 +166,7 @@ export class ProjectTestCasesComponent implements OnInit, OnDestroy {
       this.route.queryParams.subscribe((params) => {
         if (params['generationRun']) {
           this.generationRunFilter = params['generationRun'];
+          this.updateSelectedRunLabel(this.generationRunFilter);
           this.cdr.markForCheck(); // Явно говорим Angular проверить изменения
         }
       })
@@ -161,6 +177,7 @@ export class ProjectTestCasesComponent implements OnInit, OnDestroy {
       this.filterService.generationRunFilter$.subscribe((runId) => {
         if (runId !== this.generationRunFilter) {
           this.generationRunFilter = runId;
+          this.updateSelectedRunLabel(runId);
           this.cdr.markForCheck();
         }
       })
@@ -225,26 +242,58 @@ export class ProjectTestCasesComponent implements OnInit, OnDestroy {
   }
 
   deleteTestCase(testCaseId: string) {
-    if (confirm('Are you sure you want to delete this test case?')) {
-      this.testCases = this.testCases.filter((tc) => tc.id !== testCaseId);
-    }
+    const tc = this.testCases.find((t) => t.id === testCaseId)!;
+    this.dialogItems = [`${tc.id}: "${tc.name}"`];
+    this.dialogMessage = 'Delete test case:'; // заголовок перед списком
+    this.dialogConfirm = () => {
+      this.testCases = this.testCases.filter((t) => t.id !== testCaseId);
+      this.notificationService.success(`Deleted ${testCaseId}`);
+      this.showDialog = false;
+      this.cdr.markForCheck();
+    };
+    this.showDialog = true;
   }
 
-  changeTestCaseStatus(testCaseId: string, newStatus: TestCaseReviewStatus) {
-    const testCase = this.testCases.find((tc) => tc.id === testCaseId);
-    if (testCase) {
-      testCase.reviewStatus = newStatus;
-    }
+  deleteSelected(): void {
+    this.dialogItems = this.testCases
+      .filter((tc) => tc.selected)
+      .map((tc) => `${tc.id}: "${tc.name}"`);
+    this.dialogMessage = 'Delete selected cases:';
+    this.dialogConfirm = () => {
+      this.testCases = this.testCases.filter((tc) => !tc.selected);
+      this.notificationService.success('Selected test cases deleted.');
+      this.showDialog = false;
+      this.cdr.markForCheck();
+    };
+    this.showDialog = true;
   }
 
-  exportCSV() {
-    // Logic to export as CSV
-    alert('Exporting test cases as CSV');
+  exportCSV(): void {
+    const list = this.testCases
+      .filter((t) => t.selected)
+      .map((t) => `${t.id}: "${t.name}"`);
+    this.dialogItems = list;
+    this.dialogMessage = 'Export as CSV:';
+    this.dialogConfirm = () => {
+      // ...реальный экспорт...
+      this.notificationService.success('CSV exported.');
+      this.showDialog = false;
+    };
+    this.showDialog = true;
   }
 
-  exportJSON() {
-    // Logic to export as JSON
-    alert('Exporting test cases as JSON');
+  exportJSON(): void {
+    const list = this.testCases
+      .filter((t) => t.selected)
+      .map((t) => `${t.id}: "${t.name}"`);
+    this.dialogItems = list;
+    this.dialogMessage = 'Export as JSON:';
+    this.dialogConfirm = () => {
+      // ...реальный экспорт...
+      this.notificationService.success('JSON exported.');
+      this.showDialog = false;
+    };
+    this.showDialog = true;
   }
 
   toggleDropdown(key: keyof typeof this.dropdownOpen): void {
@@ -310,14 +359,20 @@ export class ProjectTestCasesComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
-  // Удаляет все выбранные тест-кейсы
-  deleteSelected(): void {
-    this.testCases = this.testCases.filter((tc) => !tc.selected);
-    this.cdr.markForCheck();
-  }
-
   // Проверка, есть ли выбранные тест-кейсы
   get hasSelected(): boolean {
     return this.testCases.some((tc) => tc.selected);
+  }
+
+  private updateSelectedRunLabel(runId: string): void {
+    const runObj = this.generationRuns.find((r) => r.id === runId);
+    if (runObj) {
+      this.selectedRun = `${this.datePipe.transform(
+        runObj.timestamp,
+        'M/d/yy, h:mm a'
+      )} (${runObj.testCasesCount} tests)`;
+    } else {
+      this.selectedRun = 'All Runs';
+    }
   }
 }

@@ -1,10 +1,10 @@
 <div class="background-text">CREATE PROJECT</div>
 <div class="nav-buttons">
-  <button routerLink="/home" class="nav-button home">
+  <button class="nav-button home" (click)="goHome()">
     <mat-icon class="icon">arrow_back</mat-icon>
     Home
   </button>
-  <button routerLink="/recent-project" class="nav-button recent">
+  <button class="nav-button recent" (click)="goRecentProject()">
     Recent Project
     <mat-icon class="icon">arrow_forward</mat-icon>
   </button>
@@ -164,9 +164,7 @@
 
     <div class="button-group">
       <button type="button" (click)="onCancel()">Cancel</button>
-      <button type="submit" [disabled]="projectForm.invalid">
-        Create Project
-      </button>
+      <button type="submit">Create Project</button>
     </div>
 
     <div class="server-error" *ngIf="formError">{{ formError }}</div>

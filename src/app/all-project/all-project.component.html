@@ -118,7 +118,7 @@
                 <td>
                   <button
                     class="delete-button"
-                    (click)="onDeleteProject(project)"
+                    (click)="confirmDelete(project)"
                   >
                     <mat-icon>delete</mat-icon>
                   </button>
@@ -163,3 +163,21 @@
     <mat-icon class="icon">arrow_forward</mat-icon>
   </button>
 </div>
+
+<div class="projects-list">
+  <div *ngFor="let project of displayedProjects" class="project-item">
+    <!-- ...existing project display... -->
+    <button class="icon-button" (click)="confirmDelete(project)" title="Delete">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
+</div>
+
+<!-- Confirm Dialog -->
+<app-confirm-dialog
+  *ngIf="showDialog"
+  [message]="dialogMessage"
+  title="Confirm Delete"
+  (confirmed)="dialogConfirm()"
+  (cancelled)="showDialog = false"
+></app-confirm-dialog>

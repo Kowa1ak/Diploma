@@ -9,6 +9,7 @@
         id="projectName"
         [(ngModel)]="editedProject.name"
         class="form-control"
+        (ngModelChange)="onSettingChange()"
       />
     </div>
 
@@ -19,6 +20,7 @@
         [(ngModel)]="editedProject.description"
         rows="3"
         class="form-control"
+        (ngModelChange)="onSettingChange()"
       ></textarea>
     </div>
 
@@ -53,22 +55,28 @@
           <div class="status-options">
             <span
               class="status-box Active"
-              [class.selected]="projectStatus === 'Active'"
-              (click)="projectStatus = 'Active'"
+              [class.selected]="projectStatus === ProjectStatusEnum.Active"
+              (click)="
+                projectStatus = ProjectStatusEnum.Active; onSettingChange()
+              "
             >
               Active
             </span>
             <span
               class="status-box Completed"
-              [class.selected]="projectStatus === 'Completed'"
-              (click)="projectStatus = 'Completed'"
+              [class.selected]="projectStatus === ProjectStatusEnum.Completed"
+              (click)="
+                projectStatus = ProjectStatusEnum.Completed; onSettingChange()
+              "
             >
               Completed
             </span>
             <span
               class="status-box Paused"
-              [class.selected]="projectStatus === 'Paused'"
-              (click)="projectStatus = 'Paused'"
+              [class.selected]="projectStatus === ProjectStatusEnum.Paused"
+              (click)="
+                projectStatus = ProjectStatusEnum.Paused; onSettingChange()
+              "
             >
               Paused
             </span>
@@ -78,10 +86,20 @@
     </div>
 
     <div class="form-actions">
-      <button class="action-button primary" (click)="saveProjectSettings()">
+      <button
+        class="action-button primary"
+        (click)="saveProjectSettings()"
+        [disabled]="!settingsChanged"
+      >
         Save Changes
       </button>
-      <button class="action-button" (click)="cancelChanges()">Cancel</button>
+      <button
+        class="action-button"
+        *ngIf="settingsChanged"
+        (click)="cancelChanges()"
+      >
+        Cancel
+      </button>
     </div>
   </div>
 
@@ -118,8 +136,16 @@
       This action is irreversible. All generated test cases and project data
       will be permanently deleted.
     </p>
-    <button class="action-button danger" (click)="deleteProject()">
+    <button class="action-button danger" (click)="confirmDeleteProject()">
       <mat-icon>delete_forever</mat-icon> Delete Project
     </button>
   </div>
 </div>
+
+<app-confirm-dialog
+  *ngIf="showDialog"
+  [message]="dialogMessage"
+  title="Confirmation"
+  (confirmed)="dialogConfirm()"
+  (cancelled)="showDialog = false"
+></app-confirm-dialog>

@@ -2,16 +2,20 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { NotificationService } from '../../shared/notification/notification.service';
+import { Router } from '@angular/router';
+import { TestFilterService } from '../shared/test-filter.service';
 import {
   Project,
   GenerationRun,
   GenerationStatus,
 } from '../shared/project.models';
+import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-project-generate',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule],
+  imports: [CommonModule, FormsModule, MatIconModule, ConfirmDialogComponent],
   templateUrl: './project-generate.component.html',
   styleUrls: ['./project-generate.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -66,6 +70,17 @@ export class ProjectGenerateComponent {
     },
   ];
 
+  // для диалога
+  showDialog = false;
+  dialogMessage = '';
+  dialogConfirm!: () => void;
+
+  constructor(
+    private notification: NotificationService,
+    private router: Router,
+    private filterService: TestFilterService
+  ) {}
+
   selectStrategy(strategy: string) {
     this.generationStrategy = strategy;
   }
@@ -117,59 +132,59 @@ export class ProjectGenerateComponent {
     }
   }
 
+  // Проверка корректности количества тест-кейсов
+  get isTestCaseCountValid(): boolean {
+    return this.testCaseCount >= 1 && this.testCaseCount <= 10;
+  }
+
   startGeneration() {
-    // Проверка входных данных
-    if (!this.analyzeCode) {
-      alert('Please select Source Code analysis');
+    if (!this.requirements.trim()) {
+      this.notification.error('Cannot start generation: requirements missing.');
       return;
     }
-
-    // Ограничиваем количество тест-кейсов до 10
-    if (this.testCaseCount > 10) {
-      this.testCaseCount = 10;
-    } else if (this.testCaseCount < 1) {
-      this.testCaseCount = 1;
-    }
-
-    // Проверка на необходимость подключения Git
-    if (this.analyzeCode && this.useGit && !this.gitConnected) {
-      alert('Please connect to Git repository first');
+    if (!this.isTestCaseCountValid) {
+      this.notification.error('Test Case Count must be between 1 and 10.');
       return;
     }
-
-    // Логика для запуска генерации
-    alert(`Starting generation with configuration:
-      Analyze Code: ${this.analyzeCode}
-      Use Git: ${this.useGit}
-      Analyze Requirements: Always enabled
-      Strategy: ${this.generationStrategy}
-      Components: ${
+    this.dialogMessage = [
+      'Start generation with:',
+      `- Strategy: ${this.generationStrategy}`,
+      `- Components: ${
         this.selectedComponents.length
           ? this.selectedComponents.join(', ')
           : 'All'
-      }
-      Test Case Count: ${this.testCaseCount}`);
-
-    // Здесь бы шел вызов API для запуска процесса генерации
+      }`,
+      `- Count: ${this.testCaseCount}`,
+    ].join('\n');
+    this.dialogConfirm = () => {
+      this.showDialog = false;
+      this.notification.info(this.dialogMessage);
+      this.notification.success('Generation started.');
+    };
+    this.showDialog = true;
   }
 
   viewResults(runId: string) {
-    // Logic to view generation results
-    alert(`Viewing results for generation run ${runId}`);
+    this.filterService.setGenerationRunFilter(runId);
+    this.router.navigate(['/project'], {
+      queryParams: { tab: 'test-cases', generationRun: runId },
+    });
   }
 
   cancelGeneration(runId: string) {
     // Logic to cancel generation
-    alert(`Cancelling generation run ${runId}`);
+    this.notification.info(`Generation run ${runId} cancelled.`);
+    // здесь могла бы быть реальная отмена
   }
 
   deleteRecord(runId: string) {
-    // Logic to delete generation record
-    if (confirm('Are you sure you want to delete this generation record?')) {
-      this.generationRuns = this.generationRuns.filter(
-        (run) => run.id !== runId
-      );
-    }
+    this.dialogMessage = `Delete generation record ${runId}?`;
+    this.dialogConfirm = () => {
+      this.generationRuns = this.generationRuns.filter((r) => r.id !== runId);
+      this.showDialog = false;
+      this.notification.success(`Record ${runId} deleted.`);
+    };
+    this.showDialog = true;
   }
 
   // Методы для работы с Git-репозиторием
@@ -192,7 +207,11 @@ export class ProjectGenerateComponent {
   }
 
   saveRequirements() {
-    alert('Requirements saved successfully!');
+    if (!this.requirements.trim()) {
+      this.notification.error('Please enter requirements before saving.');
+      return;
+    }
+    this.notification.success('Requirements saved successfully!');
   }
 
   // Обработчик загрузки файла требований
@@ -203,6 +222,7 @@ export class ProjectGenerateComponent {
       const reader = new FileReader();
       reader.onload = () => {
         this.requirements = reader.result as string;
+        this.notification.success('Requirements file uploaded successfully!');
       };
       reader.readAsText(file);
     }

@@ -21,6 +21,7 @@
           <button
             class="action-button primary bordered"
             (click)="saveRequirements()"
+            [disabled]="!requirements.trim()"
           >
             <mat-icon>save</mat-icon>
             Save Requirements
@@ -35,6 +36,7 @@
           <button
             class="action-button secondary"
             (click)="reqFileInput.click()"
+            [disabled]="false"
           >
             <mat-icon>upload_file</mat-icon>
             Upload File
@@ -93,6 +95,9 @@
                 class="number-input"
               />
             </div>
+            <div *ngIf="!isTestCaseCountValid" class="error">
+              <small>Must be between 1 and 10.</small>
+            </div>
           </div>
         </div>
 
@@ -141,6 +146,7 @@
           <button
             class="action-button primary centered-button"
             (click)="startGeneration()"
+            [disabled]="!isTestCaseCountValid || !requirements.trim()"
           >
             Start Generation
             <mat-icon>arrow_forward</mat-icon>
@@ -285,6 +291,7 @@
                   <button
                     class="icon-button"
                     *ngIf="run.status === 'Completed'"
+                    (click)="viewResults(run.id)"
                     title="View Results"
                   >
                     <mat-icon>visibility</mat-icon>
@@ -300,11 +307,16 @@
                   <button
                     class="icon-button"
                     *ngIf="run.status === 'In Progress'"
+                    (click)="cancelGeneration(run.id)"
                     title="Cancel"
                   >
                     <mat-icon>stop</mat-icon>
                   </button>
-                  <button class="icon-button" title="Delete Record">
+                  <button
+                    class="icon-button"
+                    (click)="deleteRecord(run.id)"
+                    title="Delete Record"
+                  >
                     <mat-icon>delete</mat-icon>
                   </button>
                 </td>
@@ -316,3 +328,12 @@
     </div>
   </div>
 </div>
+
+<!-- Confirm Dialog -->
+<app-confirm-dialog
+  *ngIf="showDialog"
+  [message]="dialogMessage"
+  title="Confirmation"
+  (confirmed)="dialogConfirm()"
+  (cancelled)="showDialog = false"
+></app-confirm-dialog>

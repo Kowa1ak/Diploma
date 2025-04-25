@@ -1,0 +1,25 @@
+.notification-container {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1000;
+}
+.notification {
+  padding: 10px 16px;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  white-space: pre-wrap;      /* сохранить переводы строк */
+}
+
+.notification.info {
+  background: #64b5f6;        /* небесный синий */
+  column-count: 2;            /* две колонки */
+  column-gap: 16px;
+}
+.notification.success { background: #81c784; }
+.notification.error   { background: #e57373; }

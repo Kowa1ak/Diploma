@@ -124,6 +124,11 @@ th {
   display: flex;
   gap: 10px;
 }
+.action-buttons mat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 /* Контейнер для размещения блоков в ряд */
 .dashboard-flex-container {

@@ -1,0 +1,9 @@
+<div class="notification-container">
+  <div
+    class="notification"
+    *ngFor="let note of notifications$ | async"
+    [ngClass]="note.type"
+  >
+    {{ note.message }}
+  </div>
+</div>

@@ -215,4 +215,14 @@
       </tbody>
     </table>
   </div>
+
+  <!-- Confirm Dialog -->
+  <app-confirm-dialog
+    *ngIf="showDialog"
+    [message]="dialogMessage"
+    [items]="dialogItems"
+    title="Confirmation"
+    (confirmed)="dialogConfirm()"
+    (cancelled)="showDialog = false"
+  ></app-confirm-dialog>
 </div>

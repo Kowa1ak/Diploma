@@ -93,4 +93,11 @@
   <div class="change-password-form" *ngIf="false">
     <!-- Удалён старый блок change password -->
   </div>
+  <app-confirm-dialog
+    *ngIf="showLogoutDialog"
+    [message]="logoutMessage"
+    title="Confirmation"
+    (confirmed)="logoutConfirm()"
+    (cancelled)="showLogoutDialog = false"
+  ></app-confirm-dialog>
 </div>

@@ -83,7 +83,7 @@ textarea {
   display: flex;
   flex-direction: column;
   position: relative;
-  z-index: 1; /* make sure this is lower than the dropdown's z-index (e.g., 1000) */
+  z-index: 5; /* make sure this is lower than the dropdown's z-index (e.g., 1000) */
 }
 
 .radio-group label {
@@ -238,7 +238,7 @@ button[type="button"] {
   display: flex;
   justify-content: space-between;
   align-items: center; /* выравнивание по вертикали */
-  z-index: 5;
+  z-index: 0;
 }
 
 .nav-button {
