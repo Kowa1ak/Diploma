@@ -114,7 +114,8 @@
 }
 
 .login-form .form-group {
-  margin-bottom: 1.5rem;
+  position: relative;
+  margin-bottom: 1.3rem; /* держит высоту даже при появлении ошибки */
 }
 
 .login-form label {
@@ -144,6 +145,7 @@
 }
 
 .login-form .login-button {
+  margin-top: 10px;
   width: 100%;
   padding: 0.75rem;
   border: none;
@@ -208,7 +210,18 @@
   z-index: -1;
 }
 
+.login-form .error {
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  height: 1.2rem;
+  font-size: 0.85rem;
+  color: red;
+}
 
+.login-form input.ng-invalid.ng-touched {
+  border-color: red;
+}
 
 /* Добавлены медиа-запросы для плавного уменьшения формы при уменьшении экрана */
 @media (max-width: 1024px) {

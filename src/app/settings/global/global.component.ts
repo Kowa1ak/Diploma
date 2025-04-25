@@ -13,13 +13,7 @@ import { NotificationService } from '../../shared/notification/notification.serv
 @Component({
   selector: 'app-global',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatIconModule,
-    MatDialogModule,
-    ConfirmDialogComponent,
-  ],
+  imports: [CommonModule, FormsModule, MatIconModule, MatDialogModule],
   templateUrl: './global.component.html',
   styleUrls: ['./global.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

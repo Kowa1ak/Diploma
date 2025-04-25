@@ -138,7 +138,20 @@
 }
 
 .signup-form .form-group {
-    margin-bottom: 1rem;
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.signup-form .error {
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    font-size: 0.85rem;
+    color: red;
+}
+
+.signup-form input.ng-invalid.ng-touched {
+    border-color: red;
 }
 
 .signup-form label {
