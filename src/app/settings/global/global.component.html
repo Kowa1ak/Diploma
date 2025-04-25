@@ -4,32 +4,6 @@
     <section class="section preferences">
       <h2>Preferences</h2>
       <div class="form-group">
-        <label for="testCaseFormat">Default Test Case Format</label>
-        <div class="button-group formats">
-          <button
-            type="button"
-            [ngClass]="{ selected: selectedTestCaseFormat === 'Gherkin' }"
-            (click)="selectedTestCaseFormat = 'Gherkin'"
-          >
-            Gherkin
-          </button>
-          <button
-            type="button"
-            [ngClass]="{ selected: selectedTestCaseFormat === 'CSV' }"
-            (click)="selectedTestCaseFormat = 'CSV'"
-          >
-            CSV
-          </button>
-          <button
-            type="button"
-            [ngClass]="{ selected: selectedTestCaseFormat === 'JSON' }"
-            (click)="selectedTestCaseFormat = 'JSON'"
-          >
-            JSON
-          </button>
-        </div>
-      </div>
-      <div class="form-group">
         <label>Notifications</label>
         <div class="switch-group">
           <label class="switch">

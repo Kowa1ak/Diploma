@@ -47,7 +47,7 @@ h1 {
 
 .tab-content {
   width: 30%;
-  height: 70%;
+  height: auto;
   background: #fff;
   border-top-left-radius: 0;     
   border-top-right-radius: 20px;

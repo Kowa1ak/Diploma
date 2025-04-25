@@ -1,5 +1,5 @@
 .section {
-  flex: 1;
+  /* flex: 1;  удалено, высота будет по содержимому */
   padding: 20px; /* внутренний отступ секции */
   background: #ffffff;
   border-radius: 10px;
@@ -131,7 +131,7 @@ input:checked + .slider:before {
 }
 
 .global-columns .section {
-  flex: 1;
+  /* flex: 1;  удалено */
 }
 
 /* Кнопочная группа для API ключей */
