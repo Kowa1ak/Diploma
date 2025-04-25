@@ -21,7 +21,8 @@ import {
 })
 export class TestCaseViewComponent implements OnInit {
   testCase: TestCase | null = null;
-  editMode: boolean = false;
+  editMode = false;
+  editedProject!: TestCase;
 
   // Энумы для селектов в режиме редактирования
   testCaseTypes = Object.values(TestCaseType);
@@ -35,6 +36,16 @@ export class TestCaseViewComponent implements OnInit {
 
   // Константы для enum значений
   readonly ReviewStatus = TestCaseReviewStatus;
+
+  hoveredSection: string = '';
+  editSection: string = '';
+
+  // Состояние dropdown
+  dropdownOpen = {
+    type: false,
+    priority: false,
+    source: false,
+  };
 
   constructor(private route: ActivatedRoute, private router: Router) {}
 
@@ -80,17 +91,35 @@ export class TestCaseViewComponent implements OnInit {
     };
 
     // Инициализация временных переменных для редактирования
-    if (this.testCase.steps) {
-      this.editedSteps = this.testCase.steps.join('\n');
-    }
+    if (this.testCase) {
+      const steps = this.testCase.steps ?? [];
+      const reqs = this.testCase.relatedRequirements ?? [];
 
-    if (this.testCase.relatedRequirements) {
-      this.editedRequirements = this.testCase.relatedRequirements.join('\n');
+      this.editedProject = {
+        ...this.testCase!,
+        steps: [...steps],
+        relatedRequirements: [...reqs],
+      } as TestCase; // явное приведение
+
+      this.editedSteps = steps.join('\n');
+      this.editedRequirements = reqs.join('\n');
     }
   }
 
   toggleEditMode(): void {
     this.editMode = !this.editMode;
+    if (this.editMode && this.testCase) {
+      const steps = this.testCase.steps ?? [];
+      const reqs = this.testCase.relatedRequirements ?? [];
+
+      this.editedProject = {
+        ...this.testCase!,
+        steps: [...steps],
+        relatedRequirements: [...reqs],
+      } as TestCase; // явное приведение
+      this.editedSteps = steps.join('\n');
+      this.editedRequirements = reqs.join('\n');
+    }
   }
 
   saveChanges(): void {
@@ -114,6 +143,10 @@ export class TestCaseViewComponent implements OnInit {
       this.testCase.relatedRequirements = [];
     }
 
+    // копируем обратно изменения
+    Object.assign(this.testCase, this.editedProject);
+    this.toggleEditMode();
+
     // Логика сохранения
     alert('Changes saved successfully!');
     this.editMode = false;
@@ -126,6 +159,90 @@ export class TestCaseViewComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/project/test-cases']);
+    // Переход на страницу проекта с активным табом Test Cases
+    this.router.navigate(['/project'], { queryParams: { tab: 'test-cases' } });
+  }
+
+  onMouseEnter(section: string) {
+    this.hoveredSection = section;
+  }
+
+  onMouseLeave() {
+    this.hoveredSection = '';
+  }
+
+  startEdit(section: string): void {
+    this.editSection = section;
+    if (section === 'steps' && this.testCase) {
+      // Инициализируем editedSteps из текущих шагов
+      this.editedSteps = (this.testCase.steps ?? []).join('\n');
+    }
+    // ...existing code for other sections...
+  }
+
+  saveEdit(section: string): void {
+    if (section === 'steps' && this.testCase) {
+      // Парсим текст в массив шагов
+      const lines = this.editedSteps
+        .split('\n')
+        .map((l) => l.trim())
+        .filter((l) => l.length > 0);
+      this.testCase.steps = [...lines];
+      this.editedProject = {
+        ...this.testCase,
+        steps: [...lines],
+        relatedRequirements: [...(this.testCase.relatedRequirements ?? [])],
+      } as TestCase;
+      this.editSection = '';
+      return;
+    }
+
+    // Для остальных секций оставляем прежнюю логику
+    if (this.testCase && this.editedProject) {
+      // ...existing saveEdit logic...
+    }
+  }
+
+  cancelEdit() {
+    this.editSection = '';
+  }
+
+  addStep(): void {
+    // Гарантируем, что steps — массив
+    this.editedProject.steps = this.editedProject.steps ?? [];
+    this.editedProject.steps.push('');
+  }
+
+  removeStep(index: number): void {
+    if (this.editedProject) {
+      // Гарантируем, что steps — массив
+      this.editedProject.steps = this.editedProject.steps ?? [];
+      this.editedProject.steps.splice(index, 1);
+    }
+  }
+
+  toggleDropdown(key: keyof typeof this.dropdownOpen): void {
+    // Закрываем остальные
+    (
+      Object.keys(this.dropdownOpen) as Array<keyof typeof this.dropdownOpen>
+    ).forEach((k) => {
+      if (k !== key) this.dropdownOpen[k] = false;
+    });
+    this.dropdownOpen[key] = !this.dropdownOpen[key];
+  }
+
+  selectOption(key: 'type' | 'priority' | 'source', value: string) {
+    this.dropdownOpen[key] = false;
+    switch (key) {
+      case 'type':
+        this.editedProject.type = value as TestCaseType;
+        break;
+      case 'priority':
+        this.editedProject.priority = value as TestCasePriority;
+        break;
+      case 'source':
+        this.editedProject.source = value as TestCaseSource;
+        break;
+    }
   }
 }

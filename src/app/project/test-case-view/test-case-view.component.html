@@ -28,17 +28,26 @@
             *ngIf="!editMode"
             class="badge"
             [class]="testCase.type.toLowerCase()"
-            >{{ testCase.type }}</span
           >
-          <select
-            *ngIf="editMode"
-            [(ngModel)]="testCase.type"
-            class="form-control"
-          >
-            <option *ngFor="let type of testCaseTypes" [value]="type">
-              {{ type }}
-            </option>
-          </select>
+            {{ testCase.type }}
+          </span>
+          <div *ngIf="editMode" class="filter-dropdown">
+            <button class="filter-button" (click)="toggleDropdown('type')">
+              {{ editedProject.type }}
+              <mat-icon>{{
+                dropdownOpen.type ? "expand_less" : "expand_more"
+              }}</mat-icon>
+            </button>
+            <div class="dropdown-menu" *ngIf="dropdownOpen.type">
+              <div
+                class="dropdown-item"
+                *ngFor="let t of testCaseTypes"
+                (click)="selectOption('type', t)"
+              >
+                {{ t }}
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="metadata-item">
@@ -47,34 +56,48 @@
             *ngIf="!editMode"
             class="priority"
             [class]="'priority-' + testCase.priority.toLowerCase()"
-            >{{ testCase.priority }}</span
           >
-          <select
-            *ngIf="editMode"
-            [(ngModel)]="testCase.priority"
-            class="form-control"
-          >
-            <option
-              *ngFor="let priority of testCasePriorities"
-              [value]="priority"
-            >
-              {{ priority }}
-            </option>
-          </select>
+            {{ testCase.priority }}
+          </span>
+          <div *ngIf="editMode" class="filter-dropdown">
+            <button class="filter-button" (click)="toggleDropdown('priority')">
+              {{ editedProject.priority }}
+              <mat-icon>{{
+                dropdownOpen.priority ? "expand_less" : "expand_more"
+              }}</mat-icon>
+            </button>
+            <div class="dropdown-menu" *ngIf="dropdownOpen.priority">
+              <div
+                class="dropdown-item"
+                *ngFor="let p of testCasePriorities"
+                (click)="selectOption('priority', p)"
+              >
+                {{ p }}
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="metadata-item">
           <span class="metadata-label">Source:</span>
           <span *ngIf="!editMode">{{ testCase.source }}</span>
-          <select
-            *ngIf="editMode"
-            [(ngModel)]="testCase.source"
-            class="form-control"
-          >
-            <option *ngFor="let source of testCaseSources" [value]="source">
-              {{ source }}
-            </option>
-          </select>
+          <div *ngIf="editMode" class="filter-dropdown">
+            <button class="filter-button" (click)="toggleDropdown('source')">
+              {{ editedProject.source }}
+              <mat-icon>{{
+                dropdownOpen.source ? "expand_less" : "expand_more"
+              }}</mat-icon>
+            </button>
+            <div class="dropdown-menu" *ngIf="dropdownOpen.source">
+              <div
+                class="dropdown-item"
+                *ngFor="let s of testCaseSources"
+                (click)="selectOption('source', s)"
+              >
+                {{ s }}
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="metadata-item">
@@ -127,122 +150,320 @@
     </div>
   </div>
 
+  <!-- Header edit buttons -->
+  <div class="section-actions header-actions" *ngIf="editMode">
+    <button class="action-button" (click)="toggleEditMode()">Cancel</button>
+    <button class="action-button primary" (click)="saveChanges()">Save</button>
+  </div>
+
   <div class="test-case-content">
     <div class="content-grid">
       <!-- Левая колонка -->
       <div class="column">
-        <div class="section">
-          <h2 class="section-title">Description</h2>
-          <div *ngIf="!editMode" class="section-content">
-            {{ testCase.description }}
+        <div
+          class="section"
+          (mouseenter)="onMouseEnter('description')"
+          (mouseleave)="onMouseLeave()"
+        >
+          <div class="section-header">
+            <h3 class="section-title">Description</h3>
+            <button
+              class="edit-icon"
+              *ngIf="hoveredSection === 'description' && !editSection"
+              (click)="startEdit('description')"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
           </div>
-          <textarea
-            *ngIf="editMode"
-            [(ngModel)]="testCase.description"
-            class="form-control textarea"
-          ></textarea>
+
+          <div *ngIf="editSection === 'description'; else viewDesc">
+            <textarea
+              class="form-control textarea"
+              [(ngModel)]="editedProject.description"
+            ></textarea>
+            <div class="section-actions">
+              <button
+                class="action-button primary"
+                (click)="saveEdit('description')"
+              >
+                Save
+              </button>
+              <button class="action-button" (click)="cancelEdit()">
+                Cancel
+              </button>
+            </div>
+          </div>
+
+          <ng-template #viewDesc>
+            <div class="section-content">{{ editedProject.description }}</div>
+          </ng-template>
         </div>
 
-        <div class="section">
-          <h2 class="section-title">Preconditions</h2>
-          <div *ngIf="!editMode" class="section-content">
-            {{ testCase.preconditions }}
+        <div
+          class="section"
+          (mouseenter)="onMouseEnter('preconditions')"
+          (mouseleave)="onMouseLeave()"
+        >
+          <div class="section-header">
+            <h3 class="section-title">Preconditions</h3>
+            <button
+              class="edit-icon"
+              *ngIf="hoveredSection === 'preconditions' && !editSection"
+              (click)="startEdit('preconditions')"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
           </div>
-          <textarea
-            *ngIf="editMode"
-            [(ngModel)]="testCase.preconditions"
-            class="form-control textarea"
-          ></textarea>
+
+          <div *ngIf="editSection === 'preconditions'; else viewPreconditions">
+            <textarea
+              class="form-control textarea"
+              [(ngModel)]="editedProject.preconditions"
+            ></textarea>
+            <div class="section-actions">
+              <button
+                class="action-button primary"
+                (click)="saveEdit('preconditions')"
+              >
+                Save
+              </button>
+              <button class="action-button" (click)="cancelEdit()">
+                Cancel
+              </button>
+            </div>
+          </div>
+
+          <ng-template #viewPreconditions>
+            <div class="section-content">{{ editedProject.preconditions }}</div>
+          </ng-template>
         </div>
 
-        <div class="section">
-          <h2 class="section-title">Test Steps</h2>
-          <div
-            *ngIf="!editMode && testCase.steps"
-            class="section-content steps"
-          >
-            <ol>
-              <li *ngFor="let step of testCase.steps">{{ step }}</li>
-            </ol>
+        <div
+          class="section"
+          (mouseenter)="onMouseEnter('steps')"
+          (mouseleave)="onMouseLeave()"
+        >
+          <div class="section-header">
+            <h3 class="section-title">Test Steps</h3>
+            <button
+              class="edit-icon"
+              *ngIf="hoveredSection === 'steps' && !editSection"
+              (click)="startEdit('steps')"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
           </div>
-          <textarea
-            *ngIf="editMode"
-            [(ngModel)]="editedSteps"
-            class="form-control textarea"
-          ></textarea>
+
+          <!-- Редактирование -->
+          <div *ngIf="editSection === 'steps'; else viewSteps">
+            <textarea
+              class="form-control textarea"
+              [(ngModel)]="editedSteps"
+            ></textarea>
+            <div class="section-actions">
+              <button class="action-button primary" (click)="saveEdit('steps')">
+                Save
+              </button>
+              <button class="action-button" (click)="cancelEdit()">
+                Cancel
+              </button>
+            </div>
+          </div>
+
+          <!-- Просмотр -->
+          <ng-template #viewSteps>
+            <div class="section-content steps">
+              <ol>
+                <li *ngFor="let step of testCase.steps ?? []">{{ step }}</li>
+              </ol>
+            </div>
+          </ng-template>
         </div>
       </div>
 
       <!-- Правая колонка -->
       <div class="column">
-        <div class="section">
-          <h2 class="section-title">Input Data</h2>
-          <pre *ngIf="!editMode" class="section-content code">{{
-            testCase.inputData
-          }}</pre>
-          <textarea
-            *ngIf="editMode"
-            [(ngModel)]="testCase.inputData"
-            class="form-control textarea code-editor"
-          ></textarea>
-        </div>
-
-        <div class="section">
-          <h2 class="section-title">Expected Outcome</h2>
-          <div *ngIf="!editMode" class="section-content">
-            {{ testCase.expectedOutcome }}
-          </div>
-          <textarea
-            *ngIf="editMode"
-            [(ngModel)]="testCase.expectedOutcome"
-            class="form-control textarea"
-          ></textarea>
-        </div>
-
-        <div class="section">
-          <h2 class="section-title">Notes & AI Analysis</h2>
-          <div *ngIf="!editMode" class="section-content">
-            <p>{{ testCase.notes }}</p>
-            <div
-              *ngIf="testCase.aiConfidence !== undefined"
-              class="ai-confidence"
+        <div
+          class="section"
+          (mouseenter)="onMouseEnter('inputData')"
+          (mouseleave)="onMouseLeave()"
+        >
+          <div class="section-header">
+            <h3 class="section-title">Input Data</h3>
+            <button
+              class="edit-icon"
+              *ngIf="hoveredSection === 'inputData' && !editSection"
+              (click)="startEdit('inputData')"
             >
-              <span class="confidence-label">AI Confidence:</span>
-              <div class="confidence-bar">
-                <div
-                  class="confidence-fill"
-                  [style.width.%]="testCase.aiConfidence * 100"
-                ></div>
-                <span class="confidence-value"
-                  >{{ (testCase.aiConfidence * 100).toFixed(0) }}%</span
-                >
-              </div>
+              <mat-icon>edit</mat-icon>
+            </button>
+          </div>
+
+          <div *ngIf="editSection === 'inputData'; else viewInputData">
+            <textarea
+              class="form-control textarea code-editor"
+              [(ngModel)]="testCase.inputData"
+            ></textarea>
+            <div class="section-actions">
+              <button
+                class="action-button primary"
+                (click)="saveEdit('inputData')"
+              >
+                Save
+              </button>
+              <button class="action-button" (click)="cancelEdit()">
+                Cancel
+              </button>
             </div>
           </div>
-          <textarea
-            *ngIf="editMode"
-            [(ngModel)]="testCase.notes"
-            class="form-control textarea"
-          ></textarea>
+
+          <ng-template #viewInputData>
+            <pre class="section-content code">{{ testCase.inputData }}</pre>
+          </ng-template>
         </div>
 
-        <div class="section">
-          <h2 class="section-title">Related Requirements</h2>
-          <div
-            *ngIf="!editMode && testCase.relatedRequirements"
-            class="section-content tags"
-          >
-            <span
-              class="tag"
-              *ngFor="let req of testCase.relatedRequirements"
-              >{{ req }}</span
+        <div
+          class="section"
+          (mouseenter)="onMouseEnter('expectedOutcome')"
+          (mouseleave)="onMouseLeave()"
+        >
+          <div class="section-header">
+            <h3 class="section-title">Expected Outcome</h3>
+            <button
+              class="edit-icon"
+              *ngIf="hoveredSection === 'expectedOutcome' && !editSection"
+              (click)="startEdit('expectedOutcome')"
             >
+              <mat-icon>edit</mat-icon>
+            </button>
           </div>
-          <textarea
-            *ngIf="editMode"
-            [(ngModel)]="editedRequirements"
-            class="form-control textarea"
-          ></textarea>
+
+          <div
+            *ngIf="editSection === 'expectedOutcome'; else viewExpectedOutcome"
+          >
+            <textarea
+              class="form-control textarea"
+              [(ngModel)]="testCase.expectedOutcome"
+            ></textarea>
+            <div class="section-actions">
+              <button
+                class="action-button primary"
+                (click)="saveEdit('expectedOutcome')"
+              >
+                Save
+              </button>
+              <button class="action-button" (click)="cancelEdit()">
+                Cancel
+              </button>
+            </div>
+          </div>
+
+          <ng-template #viewExpectedOutcome>
+            <div class="section-content">{{ testCase.expectedOutcome }}</div>
+          </ng-template>
+        </div>
+
+        <div
+          class="section"
+          (mouseenter)="onMouseEnter('notes')"
+          (mouseleave)="onMouseLeave()"
+        >
+          <div class="section-header">
+            <h3 class="section-title">Notes & AI Analysis</h3>
+            <button
+              class="edit-icon"
+              *ngIf="hoveredSection === 'notes' && !editSection"
+              (click)="startEdit('notes')"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+          </div>
+
+          <div *ngIf="editSection === 'notes'; else viewNotes">
+            <textarea
+              class="form-control textarea"
+              [(ngModel)]="testCase.notes"
+            ></textarea>
+            <div class="section-actions">
+              <button class="action-button primary" (click)="saveEdit('notes')">
+                Save
+              </button>
+              <button class="action-button" (click)="cancelEdit()">
+                Cancel
+              </button>
+            </div>
+          </div>
+
+          <ng-template #viewNotes>
+            <div class="section-content">
+              <p>{{ testCase.notes }}</p>
+              <div
+                *ngIf="testCase.aiConfidence !== undefined"
+                class="ai-confidence"
+              >
+                <span class="confidence-label">AI Confidence:</span>
+                <div class="confidence-bar">
+                  <div
+                    class="confidence-fill"
+                    [style.width.%]="testCase.aiConfidence * 100"
+                  ></div>
+                  <span class="confidence-value"
+                    >{{ (testCase.aiConfidence * 100).toFixed(0) }}%</span
+                  >
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+
+        <div
+          class="section"
+          (mouseenter)="onMouseEnter('relatedRequirements')"
+          (mouseleave)="onMouseLeave()"
+        >
+          <div class="section-header">
+            <h3 class="section-title">Related Requirements</h3>
+            <button
+              class="edit-icon"
+              *ngIf="hoveredSection === 'relatedRequirements' && !editSection"
+              (click)="startEdit('relatedRequirements')"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+          </div>
+
+          <div
+            *ngIf="
+              editSection === 'relatedRequirements';
+              else viewRelatedRequirements
+            "
+          >
+            <textarea
+              class="form-control textarea"
+              [(ngModel)]="editedRequirements"
+            ></textarea>
+            <div class="section-actions">
+              <button
+                class="action-button primary"
+                (click)="saveEdit('relatedRequirements')"
+              >
+                Save
+              </button>
+              <button class="action-button" (click)="cancelEdit()">
+                Cancel
+              </button>
+            </div>
+          </div>
+
+          <ng-template #viewRelatedRequirements>
+            <div class="section-content tags">
+              <span
+                class="tag"
+                *ngFor="let req of testCase.relatedRequirements ?? []"
+                >{{ req }}</span
+              >
+            </div>
+          </ng-template>
         </div>
 
         <div class="section metadata-section">
@@ -257,14 +478,5 @@
         </div>
       </div>
     </div>
-  </div>
-
-  <div class="footer-actions" *ngIf="editMode">
-    <button class="action-button secondary" (click)="toggleEditMode()">
-      Cancel
-    </button>
-    <button class="action-button primary" (click)="saveChanges()">
-      Save Changes
-    </button>
   </div>
 </div>
