@@ -112,3 +112,37 @@
     </div>
   </div>
 </div>
+<!-- Confirmation Modal -->
+<div
+  class="modal-overlay"
+  *ngIf="showConfirmationModal"
+  (click)="closeConfirmationModal()"
+>
+  <div class="modal" (click)="$event.stopPropagation()">
+    <button class="close-btn" (click)="closeConfirmationModal()">
+      <mat-icon>close</mat-icon>
+    </button>
+    <mat-icon class="mail-icon">mail_outline</mat-icon>
+    <h2>Email Confirmation</h2>
+    <p>
+      We have sent email to
+      <span class="highlight">{{ confirmationEmail }}</span>
+      to confirm the validity of your email address. After receiving the email,
+      follow the link provided to complete your registration.
+    </p>
+    <hr />
+    <p class="resend-text">
+      If you have not received any mail
+      <a
+        class="resend-link"
+        (click)="resendConfirmation()"
+        [class.disabled]="resendCountdown > 0"
+        >{{
+          resendCountdown > 0
+            ? "Resend in " + resendCountdown + "s"
+            : "Resend confirmation mail"
+        }}</a
+      >
+    </p>
+  </div>
+</div>
