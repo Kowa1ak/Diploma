@@ -1,9 +1,15 @@
-import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  OnInit,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
 import { NotificationService } from '../shared/notification/notification.service';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 enum ProjectStatus {
   Active = 'Active',
@@ -17,90 +23,67 @@ interface Project {
   description: string;
   primaryLanguage: string;
   lastModified: Date;
-  status: ProjectStatus; // новое свойство
+  status: ProjectStatus;
 }
 
 @Component({
   selector: 'app-all-project',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatIconModule, ConfirmDialogComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatIconModule,
+    ConfirmDialogComponent,
+    HttpClientModule,
+  ],
   templateUrl: './all-project.component.html',
   styleUrls: ['./all-project.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AllProjectComponent implements OnInit {
-  public ProjectStatus = ProjectStatus; // Make the enum accessible in the template
-  projects: Project[] = [
-    {
-      id: 1,
-      name: 'Project One',
-      description: 'Description for project one',
-      primaryLanguage: 'TypeScript',
-      lastModified: new Date(),
-      status: ProjectStatus.Active,
-    },
-    {
-      id: 2,
-      name: 'Project Two',
-      description:
-        'Description for project two which is longer and might need truncation',
-      primaryLanguage: 'JavaScript',
-      lastModified: new Date(),
-      status: ProjectStatus.Completed,
-    },
-    {
-      id: 3,
-      name: 'Project Three',
-      description: 'Description for project three',
-      primaryLanguage: 'Python',
-      lastModified: new Date(),
-      status: ProjectStatus.Paused,
-    },
-    {
-      id: 4,
-      name: 'Project 4',
-      description: 'Description for project three',
-      primaryLanguage: 'Python',
-      lastModified: new Date(),
-      status: ProjectStatus.Paused,
-    },
-    {
-      id: 5,
-      name: 'Project 5',
-      description: 'Description for project three',
-      primaryLanguage: 'Python',
-      lastModified: new Date(),
-      status: ProjectStatus.Paused,
-    },
-    {
-      id: 6,
-      name: 'Project 6',
-      description: 'Description for project three',
-      primaryLanguage: 'Python',
-      lastModified: new Date(),
-      status: ProjectStatus.Paused,
-    },
-  ];
+  public ProjectStatus = ProjectStatus;
+  projects: Project[] = [];
 
   currentPage: number = 1;
-  rowsPerPage: number = 5; // максимум строк на странице
-  searchTerm: string = ''; // новое свойство для поиска
-  filterPanelOpen: boolean = false; // Новое свойство для отображения панели фильтров
-
+  rowsPerPage: number = 5;
+  searchTerm: string = '';
+  filterPanelOpen: boolean = false;
   public selectedOrder: string = '';
   public selectedSort: string = '';
   public selectedStatus: ProjectStatus | '' = '';
-
   showDialog = false;
   dialogMessage = '';
   dialogConfirm!: () => void;
 
-  constructor(private notification: NotificationService) {}
+  constructor(
+    private notification: NotificationService,
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef,
+    private router: Router
+  ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.loadProjects();
+  }
 
-  loadProjects() {
-    // Удалён вызов к сервису. Используется статический массив projects.
+  private loadProjects(): void {
+    this.http.get<any[]>('/api/projects').subscribe((data) => {
+      this.projects = data.map((item) => {
+        const raw = item.status || '';
+        const statusCapitalized =
+          raw.charAt(0).toUpperCase() + raw.slice(1).toLowerCase();
+        return {
+          id: item.id,
+          name: item.name,
+          description: item.description,
+          primaryLanguage: item.programmingLanguage || item.primaryLanguage,
+          lastModified: new Date(item.createdAt || item.lastModified),
+          status: (statusCapitalized as ProjectStatus) || ProjectStatus.Active,
+        };
+      });
+      this.currentPage = 1;
+      this.cdr.markForCheck();
+    });
   }
 
   get filteredProjects(): Project[] {
@@ -210,10 +193,22 @@ export class AllProjectComponent implements OnInit {
   confirmDelete(project: Project) {
     this.dialogMessage = `Delete project "${project.name}"?`;
     this.dialogConfirm = () => {
-      this.projects = this.projects.filter((p) => p.id !== project.id);
+      this.http.delete(`/api/projects/${project.id}`).subscribe({
+        next: () => {
+          this.loadProjects();
+          this.notification.success(`Project "${project.name}" deleted.`);
+        },
+        error: () => {
+          this.notification.error('Failed to delete project.');
+        },
+      });
       this.showDialog = false;
-      this.notification.success(`Project "${project.name}" deleted.`);
     };
     this.showDialog = true;
+  }
+
+  viewProject(id: number): void {
+    // сразу переходим на страницу проекта по id
+    this.router.navigate(['/project', id]);
   }
 }

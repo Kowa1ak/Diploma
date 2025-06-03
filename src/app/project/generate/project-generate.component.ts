@@ -11,6 +11,7 @@ import {
   GenerationStatus,
 } from '../shared/project.models';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-project-generate',
@@ -78,7 +79,8 @@ export class ProjectGenerateComponent {
   constructor(
     private notification: NotificationService,
     private router: Router,
-    private filterService: TestFilterService
+    private filterService: TestFilterService,
+    private http: HttpClient
   ) {}
 
   selectStrategy(strategy: string) {
@@ -138,30 +140,21 @@ export class ProjectGenerateComponent {
   }
 
   startGeneration() {
-    if (!this.requirements.trim()) {
-      this.notification.error('Cannot start generation: requirements missing.');
+    if (!this.requirements.trim() || !this.isTestCaseCountValid) {
+      this.notification.error('Invalid generation parameters.');
       return;
     }
-    if (!this.isTestCaseCountValid) {
-      this.notification.error('Test Case Count must be between 1 and 10.');
-      return;
-    }
-    this.dialogMessage = [
-      'Start generation with:',
-      `- Strategy: ${this.generationStrategy}`,
-      `- Components: ${
-        this.selectedComponents.length
-          ? this.selectedComponents.join(', ')
-          : 'All'
-      }`,
-      `- Count: ${this.testCaseCount}`,
-    ].join('\n');
-    this.dialogConfirm = () => {
-      this.showDialog = false;
-      this.notification.info(this.dialogMessage);
-      this.notification.success('Generation started.');
+    const payload = {
+      projectId: this.project.id,
+      requirements: this.requirements,
+      analyzeSourceCode: this.analyzeCode,
+      testCasesCount: this.testCaseCount,
+      aiStrategy: this.generationStrategy,
     };
-    this.showDialog = true;
+    this.http.post('/api/generation-scopes', payload).subscribe({
+      next: (res) => console.log('Generation response:', res),
+      error: () => this.notification.error('Generation failed'),
+    });
   }
 
   viewResults(runId: string) {

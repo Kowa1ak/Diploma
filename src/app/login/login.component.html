@@ -25,23 +25,22 @@
           class="login-form"
         >
           <div class="form-group">
-            <label for="email">Email</label>
+            <label for="username">Username</label>
             <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="Enter your email"
+              type="text"
+              id="username"
+              name="username"
+              placeholder="Enter your username"
               required
-              email
-              [(ngModel)]="email"
-              #emailCtrl="ngModel"
+              [(ngModel)]="username"
+              #usernameCtrl="ngModel"
             />
-            <div class="error" *ngIf="emailCtrl.touched && emailCtrl.invalid">
-              <small *ngIf="emailCtrl.errors?.['required']"
-                >Email is required.</small
-              >
-              <small *ngIf="emailCtrl.errors?.['email']"
-                >Invalid email format.</small
+            <div
+              class="error"
+              *ngIf="usernameCtrl.touched && usernameCtrl.invalid"
+            >
+              <small *ngIf="usernameCtrl.errors?.['required']"
+                >Username is required.</small
               >
             </div>
           </div>

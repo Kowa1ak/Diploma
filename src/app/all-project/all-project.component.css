@@ -435,6 +435,27 @@ mat-icon {
   color: #f9a825; /* Темно-желтый текст */
 }
 
+/* Базовый стиль для меток статуса */
+.status-box {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.9rem;
+  color: #fff;
+}
+
+.status-box.Active {
+  background: var(--primary-color);
+}
+
+.status-box.Completed {
+  background: var(--secondary-color);
+}
+
+.status-box.Paused {
+  background: gray;
+}
+
 /* Стили для группы фильтров по статусу */
 .status-filters {
   display: flex;

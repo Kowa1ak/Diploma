@@ -7,22 +7,22 @@
   >
     <!-- Dashboard Tab -->
     <mat-tab label="Dashboard">
-      <app-project-dashboard [project]="project"></app-project-dashboard>
+      <app-project-dashboard [project]="project!"></app-project-dashboard>
     </mat-tab>
 
     <!-- Generate Tab (теперь включает и Inputs) -->
     <mat-tab label="Generate">
-      <app-project-generate [project]="project"></app-project-generate>
+      <app-project-generate [project]="project!"></app-project-generate>
     </mat-tab>
 
     <!-- Test Cases Tab -->
     <mat-tab label="Test Cases">
-      <app-project-test-cases [project]="project"></app-project-test-cases>
+      <app-project-test-cases [project]="project!"></app-project-test-cases>
     </mat-tab>
 
     <!-- Settings Tab -->
     <mat-tab label="Settings">
-      <app-project-settings [project]="project"></app-project-settings>
+      <app-project-settings [project]="project!"></app-project-settings>
     </mat-tab>
   </mat-tab-group>
 </div>

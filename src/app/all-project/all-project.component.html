@@ -104,7 +104,12 @@
           </thead>
           <tbody>
             <ng-container *ngIf="displayedProjects.length; else noResults">
-              <tr *ngFor="let project of displayedProjects" class="project-row">
+              <tr
+                *ngFor="let project of displayedProjects"
+                class="project-row"
+                (click)="viewProject(project.id)"
+                style="cursor: pointer"
+              >
                 <td>{{ project.name }}</td>
                 <td>{{ project.description | slice : 0 : 50 }}...</td>
                 <!-- Обрезаем description -->

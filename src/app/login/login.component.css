@@ -125,6 +125,7 @@
   margin-bottom: 0.5rem;
 }
 
+.login-form input[type="text"],
 .login-form input[type="email"],
 .login-form input[type="password"] {
   width: 100%;
@@ -138,6 +139,7 @@
   /* убираем box-shadow */
 }
 
+.login-form input[type="text"]:focus,
 .login-form input[type="email"]:focus,
 .login-form input[type="password"]:focus {
   outline: none;

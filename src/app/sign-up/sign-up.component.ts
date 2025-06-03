@@ -7,8 +7,10 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { AuthService } from '../auth.service';
+import { NotificationService } from '../shared/notification/notification.service';
 
 @Component({
   selector: 'app-sign-up',
@@ -20,7 +22,7 @@ import { MatIconModule } from '@angular/material/icon';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignUpComponent {
-  firstName = '';
+  username = '';
   email = '';
   password = '';
   confirmPassword = '';
@@ -29,26 +31,48 @@ export class SignUpComponent {
   resendCountdown = 0;
   private resendTimer!: any;
 
-  constructor(private zone: NgZone, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private auth: AuthService,
+    private notification: NotificationService,
+    private router: Router,
+    private zone: NgZone,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   register(form: NgForm): void {
-    if (form.invalid) {
+    if (form.invalid || this.password !== this.confirmPassword) {
       form.control.markAllAsTouched();
+      if (this.password !== this.confirmPassword) {
+        this.notification.error('Passwords do not match');
+      }
       return;
     }
-    // ... handle successful registration ...
-    this.confirmationEmail = this.email;
-    this.openConfirmationModal();
+    this.auth.register(this.username, this.email, this.password).subscribe({
+      next: () => {
+        // Сразу открываем модальное окно подтверждения
+        this.confirmationEmail = this.email;
+        this.openConfirmationModal();
+      },
+      error: (err) => {
+        const serverMsg =
+          err.error?.error || err.error?.message || 'Registration failed';
+        console.error('Registration error', serverMsg);
+        this.notification.error(serverMsg);
+      },
+    });
   }
 
   openConfirmationModal(): void {
     this.showConfirmationModal = true;
+    this.cdr.markForCheck(); // запускаем повторную отрисовку
   }
 
   closeConfirmationModal(): void {
     this.showConfirmationModal = false;
     clearInterval(this.resendTimer);
     this.resendCountdown = 0;
+    // После закрытия модалки переходим на страницу логина
+    this.router.navigate(['/login']);
   }
 
   resendConfirmation(): void {

@@ -14,7 +14,7 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import {
@@ -25,11 +25,18 @@ import {
   animate,
 } from '@angular/animations';
 import { NotificationService } from '../shared/notification/notification.service';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-new-project',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatIconModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    RouterModule,
+    MatIconModule,
+  ],
   templateUrl: './new-project.component.html',
   styleUrls: ['./new-project.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -44,7 +51,7 @@ import { NotificationService } from '../shared/notification/notification.service
 export class NewProjectComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('container', { static: true }) container!: ElementRef;
 
-  projectForm: FormGroup;
+  projectForm!: FormGroup;
   formError: string = '';
   selectedFile: File | null = null;
   selectedFileName: string = '';
@@ -69,6 +76,7 @@ export class NewProjectComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private fb: FormBuilder,
+    private http: HttpClient,
     private router: Router,
     private el: ElementRef,
     private cdr: ChangeDetectorRef,
@@ -153,22 +161,30 @@ export class NewProjectComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  onSubmit(): void {
+  onSubmit() {
     if (this.projectForm.invalid) {
-      this.notificationService.error(
-        'Пожалуйста, заполните все обязательные поля.'
-      );
+      this.projectForm.markAllAsTouched();
       return;
     }
 
-    const projectName = this.projectForm.value.projectName;
-    const projectId = Math.floor(Math.random() * 1000);
-    this.notificationService.success(`Проект "${projectName}" успешно создан.`);
-    this.router.navigate([`/project/${projectId}/dashboard`]);
+    // Собираем payload в формате, ожидаемом бэкендом:
+    const payload = {
+      userId: 1, // или получайте из AuthService
+      name: this.projectForm.value.projectName,
+      description: this.projectForm.value.description,
+    };
+
+    this.http.post('/api/projects', payload).subscribe({
+      next: () => this.router.navigate(['/all-project']),
+      error: (err) => {
+        console.error('Create project error', err);
+        this.formError = 'Failed to create project.';
+      },
+    });
   }
 
   onCancel(): void {
-    this.router.navigate(['/home']);
+    this.router.navigate(['/all-project']);
   }
 
   goHome(): void {

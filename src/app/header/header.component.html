@@ -12,21 +12,28 @@
           >About</a
         >
       </li>
-      <li>
+      <li *ngIf="!auth.isAuthenticated()">
         <a
           (click)="router.navigate(['/login'])"
           style="cursor: pointer"
           [class.active]="isActive('/login')"
-          >Login</a
         >
+          Login
+        </a>
       </li>
-      <li>
+      <li *ngIf="!auth.isAuthenticated()">
         <a
           (click)="router.navigate(['/sign-up'])"
           style="cursor: pointer"
           [class.active]="isActive('/sign-up')"
-          >Sign Up</a
         >
+          Sign Up
+        </a>
+      </li>
+      <li *ngIf="auth.isAuthenticated()">
+        <a (click)="goToAccount()" style="cursor: pointer">
+          {{ auth.getUsername() }}
+        </a>
       </li>
     </ul>
   </nav>

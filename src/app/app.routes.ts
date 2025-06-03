@@ -21,7 +21,7 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'sign-up', component: SignUpComponent },
   { path: 'all-project', component: AllProjectComponent },
-  { path: 'project', component: ProjectComponent },
+  { path: 'project/:id', component: ProjectComponent },
   { path: 'project/test-case/:id', component: TestCaseViewComponent },
   { path: '**', redirectTo: 'home' },
 ];

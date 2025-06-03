@@ -1,4 +1,6 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { AuthService } from '../../auth.service';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,7 +22,7 @@ import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dial
   styleUrls: ['./account.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccountComponent {
+export class AccountComponent implements OnInit {
   username: string = 'JohnDoe'; // пример значения
   email: string = 'john@example.com'; // пример значения
   showChangePassword: boolean = false;
@@ -35,7 +37,15 @@ export class AccountComponent {
   logoutMessage = 'Are you sure you want to log out?';
   logoutConfirm!: () => void;
 
-  constructor(private notification: NotificationService) {}
+  constructor(
+    private auth: AuthService,
+    private notification: NotificationService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    // Инициализация данных пользователя, если необходимо
+  }
 
   openChangeEmail(): void {
     this.editEmail = true;
@@ -83,11 +93,7 @@ export class AccountComponent {
   }
 
   logout(): void {
-    this.logoutConfirm = () => {
-      // ...existing logout logic (e.g. clear session)...
-      this.showLogoutDialog = false;
-      this.notification.info('Logged out successfully');
-    };
-    this.showLogoutDialog = true;
+    this.auth.logout();
+    this.router.navigate(['/']); // перейти на главный маршрут
   }
 }

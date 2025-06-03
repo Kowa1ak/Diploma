@@ -6,21 +6,28 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../auth.service';
+import { NotificationService } from '../shared/notification/notification.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule], // ensure FormsModule
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent implements OnInit {
-  email: string = '';
+  username: string = '';
   password: string = '';
 
-  constructor() {}
+  constructor(
+    private auth: AuthService,
+    private router: Router,
+    private notification: NotificationService
+  ) {}
 
   ngOnInit(): void {
     // Initialization logic here
@@ -31,6 +38,9 @@ export class LoginComponent implements OnInit {
       form.control.markAllAsTouched();
       return;
     }
-    // ... здесь логика успешного входа ...
+    this.auth.login(this.username, this.password).subscribe({
+      next: () => this.router.navigate(['/home']),
+      error: () => this.notification.error('Invalid username or password'),
+    });
   }
 }

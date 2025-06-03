@@ -7,6 +7,7 @@ import {
 import { Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-header',
@@ -20,7 +21,11 @@ export class HeaderComponent implements OnInit {
   currentRoute: string = '';
   menuOpen: boolean = false;
 
-  constructor(public router: Router, private cdr: ChangeDetectorRef) {
+  constructor(
+    public router: Router,
+    private cdr: ChangeDetectorRef,
+    public auth: AuthService
+  ) {
     this.currentRoute = this.router.url;
   }
 
@@ -45,5 +50,9 @@ export class HeaderComponent implements OnInit {
   get isHomePage(): boolean {
     // Use the updated currentRoute to determine if the current page is home
     return this.currentRoute === '/home';
+  }
+
+  goToAccount(): void {
+    this.router.navigate(['/settings'], { queryParams: { tab: 'account' } });
   }
 }
