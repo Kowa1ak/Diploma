@@ -1,4 +1,12 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -21,7 +29,7 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./project-generate.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProjectGenerateComponent {
+export class ProjectGenerateComponent implements OnInit, OnChanges {
   @Input() project!: Project;
 
   // Конфигурация генерации
@@ -44,32 +52,7 @@ export class ProjectGenerateComponent {
   availableComponents: any[] = [];
 
   // Generation runs
-  generationRuns: GenerationRun[] = [
-    {
-      id: 'run-001',
-      timestamp: new Date('2023-05-20T14:30:00'),
-      status: GenerationStatus.Completed,
-      duration: '3m 45s',
-      testCasesCount: 25,
-      configuration: 'Balanced Coverage',
-    },
-    {
-      id: 'run-002',
-      timestamp: new Date('2023-05-18T10:15:00'),
-      status: GenerationStatus.Completed,
-      duration: '4m 20s',
-      testCasesCount: 32,
-      configuration: 'Focus on Edge Cases',
-    },
-    {
-      id: 'run-003',
-      timestamp: new Date('2023-05-15T16:45:00'),
-      status: GenerationStatus.Failed,
-      duration: '2m 10s',
-      testCasesCount: 0,
-      configuration: 'Security Checks',
-    },
-  ];
+  generationRuns: GenerationRun[] = [];
 
   // для диалога
   showDialog = false;
@@ -80,8 +63,40 @@ export class ProjectGenerateComponent {
     private notification: NotificationService,
     private router: Router,
     private filterService: TestFilterService,
-    private http: HttpClient
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
   ) {}
+
+  ngOnInit(): void {
+    // сразу загрузить историю запуска
+    this.loadGenerationHistory();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['project'] && this.project) {
+      this.loadGenerationHistory();
+    }
+  }
+
+  private loadGenerationHistory(): void {
+    this.http
+      .get<any[]>(`/api/generation-scopes/by-project/${this.project.id}`)
+      .subscribe({
+        next: (data) => {
+          console.log('Loaded generation history:', data);
+          this.generationRuns = data.map((item) => ({
+            id: item.id,
+            timestamp: new Date(item.createdAt || item.timestamp),
+            status: item.status,
+            duration: item.duration || '',
+            testCasesCount: item.testCasesCount || 0,
+            configuration: item.configuration || '',
+          }));
+          this.cdr.markForCheck();
+        },
+        error: (err) => console.error('Failed to load history', err),
+      });
+  }
 
   selectStrategy(strategy: string) {
     this.generationStrategy = strategy;
@@ -151,17 +166,21 @@ export class ProjectGenerateComponent {
       testCasesCount: this.testCaseCount,
       aiStrategy: this.generationStrategy,
     };
-    this.http.post('/api/generation-scopes', payload).subscribe({
-      next: (res) => console.log('Generation response:', res),
+    this.http.post<GenerationRun>('/api/generation-scopes', payload).subscribe({
+      next: (run) => {
+        console.log('Generation response:', run);
+        // добавить новый запуск в начало истории
+        this.generationRuns.unshift(run);
+        this.cdr.markForCheck();
+      },
       error: () => this.notification.error('Generation failed'),
     });
   }
 
+  // Заменить переход на тест-кейс
   viewResults(runId: string) {
-    this.filterService.setGenerationRunFilter(runId);
-    this.router.navigate(['/project'], {
-      queryParams: { tab: 'test-cases', generationRun: runId },
-    });
+    console.log('View results clicked, runId =', runId);
+    this.router.navigate(['/project/test-case', runId]);
   }
 
   cancelGeneration(runId: string) {

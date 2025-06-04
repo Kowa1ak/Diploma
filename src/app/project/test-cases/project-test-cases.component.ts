@@ -4,6 +4,8 @@ import {
   ChangeDetectionStrategy,
   OnInit,
   OnDestroy,
+  OnChanges,
+  SimpleChanges,
   ChangeDetectorRef,
   HostListener,
 } from '@angular/core';
@@ -25,6 +27,7 @@ import {
 } from '../shared/project.models';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
 import { NotificationService } from '../../shared/notification/notification.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-project-test-cases',
@@ -41,7 +44,7 @@ import { NotificationService } from '../../shared/notification/notification.serv
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [DatePipe],
 })
-export class ProjectTestCasesComponent implements OnInit, OnDestroy {
+export class ProjectTestCasesComponent implements OnInit, OnDestroy, OnChanges {
   @Input() project!: Project;
 
   // Search and filters
@@ -73,58 +76,7 @@ export class ProjectTestCasesComponent implements OnInit, OnDestroy {
   ];
 
   // Test cases
-  testCases: TestCase[] = [
-    {
-      id: 'TC-001',
-      name: 'Verify login with valid credentials',
-      type: TestCaseType.Positive,
-      source: TestCaseSource.Combined,
-      component: 'Authentication',
-      priority: TestCasePriority.High,
-      generationRun: 'run-001',
-      reviewStatus: TestCaseReviewStatus.Reviewed,
-    },
-    {
-      id: 'TC-002',
-      name: 'Test login with invalid password',
-      type: TestCaseType.Negative,
-      source: TestCaseSource.Code,
-      component: 'Authentication',
-      priority: TestCasePriority.Medium,
-      generationRun: 'run-001',
-      reviewStatus: TestCaseReviewStatus.Reviewed,
-    },
-    {
-      id: 'TC-003',
-      name: 'Verify user input with maximum character limit',
-      type: TestCaseType.Boundary,
-      source: TestCaseSource.Requirement,
-      component: 'User Profile',
-      priority: TestCasePriority.Medium,
-      generationRun: 'run-002',
-      reviewStatus: TestCaseReviewStatus.New,
-    },
-    {
-      id: 'TC-004',
-      name: 'Check SQL injection prevention in login form',
-      type: TestCaseType.Security,
-      source: TestCaseSource.ModelInternal,
-      component: 'Authentication',
-      priority: TestCasePriority.High,
-      generationRun: 'run-002',
-      reviewStatus: TestCaseReviewStatus.NeedsRevision,
-    },
-    {
-      id: 'TC-005',
-      name: 'Test API response time under load',
-      type: TestCaseType.Performance,
-      source: TestCaseSource.Code,
-      component: 'API',
-      priority: TestCasePriority.Low,
-      generationRun: 'run-002',
-      reviewStatus: TestCaseReviewStatus.New,
-    },
-  ];
+  testCases: TestCase[] = [];
 
   // Варианты фильтров
   types = ['Unit', 'Integration', 'E2E'];
@@ -152,34 +104,43 @@ export class ProjectTestCasesComponent implements OnInit, OnDestroy {
   dialogItems: string[] = []; // <– добавлено
   dialogConfirm!: () => void;
 
+  // Массив для консольных сообщений
+  consoleMessages: string[] = [];
+
   constructor(
     private route: ActivatedRoute,
     private filterService: TestFilterService,
     private cdr: ChangeDetectorRef,
     private datePipe: DatePipe,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private http: HttpClient
   ) {}
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['project'] && this.project) {
+      this.loadTestCaseHistory();
+    }
+  }
+
   ngOnInit(): void {
-    // 1. Подписываемся на изменения в URL параметрах
+    if (this.project) {
+      this.loadTestCaseHistory();
+    }
+
+    // Считываем и применяем generationRun сразу
     this.subscriptions.push(
       this.route.queryParams.subscribe((params) => {
-        if (params['generationRun']) {
-          this.generationRunFilter = params['generationRun'];
-          this.updateSelectedRunLabel(this.generationRunFilter);
-          this.cdr.markForCheck(); // Явно говорим Angular проверить изменения
-        }
+        this.generationRunFilter = params['generationRun'] || '';
+        this.updateSelectedRunLabel(this.generationRunFilter);
+        this.loadTestCases();
       })
     );
 
-    // 2. Подписываемся на изменения в сервисе фильтрации
     this.subscriptions.push(
       this.filterService.generationRunFilter$.subscribe((runId) => {
-        if (runId !== this.generationRunFilter) {
-          this.generationRunFilter = runId;
-          this.updateSelectedRunLabel(runId);
-          this.cdr.markForCheck();
-        }
+        this.generationRunFilter = runId;
+        this.updateSelectedRunLabel(runId);
+        this.loadTestCases();
       })
     );
   }
@@ -374,5 +335,61 @@ export class ProjectTestCasesComponent implements OnInit, OnDestroy {
     } else {
       this.selectedRun = 'All Runs';
     }
+  }
+
+  private loadTestCases(): void {
+    if (!this.generationRunFilter) {
+      this.testCases = [];
+      this.consoleMessages.push('No generationRunFilter set');
+      this.cdr.markForCheck();
+      return;
+    }
+    this.http
+      .get<TestCase[]>(`/api/test-cases/by-scope/${this.generationRunFilter}`)
+      .subscribe({
+        next: (data) => {
+          this.testCases = data;
+          this.consoleMessages.push(
+            `Loaded test cases: ${JSON.stringify(data)}`
+          );
+          this.cdr.markForCheck();
+        },
+        error: (err) => {
+          this.consoleMessages.push(`Error loading test cases: ${err.message}`);
+          this.notificationService.error('Ошибка загрузки тест-кейсов');
+        },
+      });
+  }
+
+  private loadAllTestCases(): void {
+    this.http
+      .get<TestCase[]>(`/api/test-cases/by-project/${this.project.id}`)
+      .subscribe({
+        next: (data) => {
+          this.testCases = data;
+          this.cdr.markForCheck();
+        },
+        error: () =>
+          this.notificationService.error('Ошибка загрузки тест-кейсов'),
+      });
+  }
+
+  private loadTestCaseHistory(): void {
+    this.http
+      .get<any[]>(`/api/test-cases/by-scope/${this.project.id}`)
+      .subscribe({
+        next: (data) => {
+          console.log('Loaded test cases history:', data);
+          this.testCases = data.map(
+            (item) =>
+              ({
+                id: item.id,
+                name: item.name || '–',
+              } as TestCase)
+          );
+          this.cdr.markForCheck();
+        },
+        error: (err) => console.error('Error loading test cases history', err),
+      });
   }
 }

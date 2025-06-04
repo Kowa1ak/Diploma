@@ -289,16 +289,18 @@
                 <td>{{ run.testCasesCount }}</td>
                 <td class="actions">
                   <button
+                    type="button"
                     class="icon-button"
-                    *ngIf="run.status === 'Completed'"
-                    (click)="viewResults(run.id)"
+                    *ngIf="run.status.toLowerCase() === 'completed'"
+                    (click)="viewResults(run.id); $event.stopPropagation()"
                     title="View Results"
                   >
                     <mat-icon>visibility</mat-icon>
                   </button>
                   <button
+                    type="button"
                     class="icon-button disabled"
-                    *ngIf="run.status === 'Failed'"
+                    *ngIf="run.status.toLowerCase() === 'failed'"
                     title="Generation failed, cannot view results"
                     disabled
                   >

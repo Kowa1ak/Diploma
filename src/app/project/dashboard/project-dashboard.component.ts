@@ -8,9 +8,9 @@ import {
   ElementRef,
   AfterViewInit,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { Router } from '@angular/router';
 import {
   Project,
   GenerationRun,
@@ -140,19 +140,22 @@ export class ProjectDashboardComponent implements AfterViewInit {
 
   // При клике переходим на вкладку Generate
   onStartNewGeneration(): void {
-    this.router.navigate(['/project'], { queryParams: { tab: 'generate' } });
+    this.router.navigate(['/project', this.project.id], {
+      queryParams: { tab: 'generate' },
+    });
   }
 
   // При клике переходим на вкладку Generate (управление Inputs)
   onManageInputs(): void {
-    this.router.navigate(['/project'], { queryParams: { tab: 'settings' } });
+    this.router.navigate(['/project', this.project.id], {
+      queryParams: { tab: 'settings' },
+    });
   }
 
   onViewAllTestCases(): void {
-    this.viewTestCases.emit();
-    // Сбрасываем фильтр и переходим на вкладку Test Cases
-    this.filterService.resetFilters();
-    this.router.navigate(['/project'], { queryParams: { tab: 'test-cases' } });
+    this.router.navigate(['/project', this.project.id], {
+      queryParams: { tab: 'test-cases' },
+    });
   }
 
   viewGenerationResults(runId: string): void {

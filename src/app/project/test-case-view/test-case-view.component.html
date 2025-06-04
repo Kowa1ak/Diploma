@@ -318,7 +318,9 @@
           </div>
 
           <ng-template #viewInputData>
-            <pre class="section-content code">{{ testCase.inputData }}</pre>
+            <pre class="section-content code">{{
+              testCase.inputData | json
+            }}</pre>
           </ng-template>
         </div>
 
@@ -468,12 +470,8 @@
 
         <div class="section metadata-section">
           <div class="metadata-item">
-            <span class="metadata-label">Generated on:</span>
+            <span class="metadata-label">Created On:</span>
             <span>{{ testCase.generatedAt | date : "medium" }}</span>
-          </div>
-          <div class="metadata-item">
-            <span class="metadata-label">Generation Run:</span>
-            <span>{{ testCase.generationRun }}</span>
           </div>
         </div>
       </div>

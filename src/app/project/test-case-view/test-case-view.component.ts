@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { ChangeDetectorRef } from '@angular/core';
 import {
   TestCase,
   TestCaseType,
@@ -47,63 +49,54 @@ export class TestCaseViewComponent implements OnInit {
     source: false,
   };
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    this.loadTestCase(id);
-  }
+    const tcId = this.route.snapshot.paramMap.get('id')!;
+    this.http.get<any>(`/api/test-cases/${tcId}`).subscribe({
+      next: (resp) => {
+        const outer = Array.isArray(resp) ? resp[0] : resp;
+        const raw = outer?.response;
+        const arr: any[] = JSON.parse(raw || '[]');
+        const d = arr[0] || {};
+        this.testCase = {
+          id: d.id,
+          name: d.name,
+          type: d.type,
+          component: d.component,
+          priority: d.priority,
+          reviewStatus: d.status,
+          description: d.description,
+          preconditions: d.preconditions,
+          steps: d.test_steps,
+          inputData: d.input_data,
+          expectedOutcome: d.expected_outcome,
+          notes: d.notes_ai_analysis,
+          aiConfidence: d.ai_confidence / 100,
+          relatedRequirements: d.related_requirements,
+          generatedAt: new Date(outer.createdAt), // <-- добавлено
+        } as TestCase;
 
-  loadTestCase(id: string | null): void {
-    // Моковые данные
-    this.testCase = {
-      id: id || 'TC-001',
-      name: 'Verify user authentication with valid credentials',
-      type: TestCaseType.Positive,
-      source: TestCaseSource.Combined,
-      component: 'Authentication',
-      priority: TestCasePriority.High,
-      generationRun: 'run-001',
-      reviewStatus: TestCaseReviewStatus.New,
-      description:
-        'This test verifies that a user can successfully authenticate with valid credentials and receive appropriate access token.',
-      preconditions:
-        'User account exists in the system. User is not currently logged in.',
-      inputData:
-        '{\n  "username": "valid_user@example.com",\n  "password": "Valid_password123"\n}',
-      expectedOutcome:
-        'HTTP Status Code: 200 OK\nResponse contains valid JWT token\nUser session is created',
-      steps: [
-        'Send POST request to /api/auth/login with valid credentials',
-        'Validate response status code is 200',
-        'Validate response contains JWT token',
-        'Verify token structure and expiration date',
-        'Try accessing protected endpoint using the token',
-      ],
-      notes:
-        'Generated based on JWT authentication implementation in AuthController.java and security requirements document section 2.3.',
-      generatedAt: new Date('2023-05-20T14:30:00'),
-      relatedRequirements: [
-        'REQ-001: User Authentication',
-        'REQ-002: Session Management',
-      ],
-      aiConfidence: 0.92,
-    };
-
-    // Инициализация временных переменных для редактирования
-    if (this.testCase) {
-      const steps = this.testCase.steps ?? [];
-      const reqs = this.testCase.relatedRequirements ?? [];
-
-      this.editedProject = {
-        ...this.testCase!,
-        steps: [...steps],
-        relatedRequirements: [...reqs],
-      } as TestCase; // явное приведение
-
-      this.editedSteps = steps.join('\n');
-      this.editedRequirements = reqs.join('\n');
-    }
+        // заполнить поля для просмотра
+        if (this.testCase) {
+          this.editedProject = { ...this.testCase };
+          this.editedSteps = this.testCase.steps?.join('\n') ?? '';
+          this.editedRequirements =
+            this.testCase.relatedRequirements?.join('\n') ?? '';
+        }
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error('Failed to load test case:', err);
+        this.testCase = null;
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   toggleEditMode(): void {
