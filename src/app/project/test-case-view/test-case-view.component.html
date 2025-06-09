@@ -1,4 +1,10 @@
-<div class="test-case-view-container" *ngIf="testCase">
+<pre *ngIf="rawResponse" style="margin-top: 70px">{{ rawResponse }}</pre>
+
+<!-- основной контент только если нет сырого ответа -->
+<div class="test-case-view-container" *ngIf="!rawResponse && testCase">
+  <div class="error-message" *ngIf="testCase.error_message">
+    {{ testCase.error_message }}
+  </div>
   <div class="test-case-header">
     <div class="back-button" (click)="goBack()">
       <mat-icon>arrow_back</mat-icon>

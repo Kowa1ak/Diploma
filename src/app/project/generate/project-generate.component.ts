@@ -83,15 +83,18 @@ export class ProjectGenerateComponent implements OnInit, OnChanges {
       .get<any[]>(`/api/generation-scopes/by-project/${this.project.id}`)
       .subscribe({
         next: (data) => {
-          console.log('Loaded generation history:', data);
-          this.generationRuns = data.map((item) => ({
-            id: item.id,
-            timestamp: new Date(item.createdAt || item.timestamp),
-            status: item.status,
-            duration: item.duration || '',
-            testCasesCount: item.testCasesCount || 0,
-            configuration: item.configuration || '',
-          }));
+          this.generationRuns = data.map((item) => {
+            // если в response есть error_message — помечаем как Failed
+            const hasError = item.response?.includes('error_message');
+            return {
+              id: item.id,
+              timestamp: new Date(item.createdAt || item.timestamp),
+              status: hasError ? GenerationStatus.Failed : item.status,
+              duration: item.duration || '',
+              testCasesCount: item.testCasesCount || 0,
+              configuration: item.configuration || '',
+            };
+          });
           this.cdr.markForCheck();
         },
         error: (err) => console.error('Failed to load history', err),

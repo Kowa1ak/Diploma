@@ -7,6 +7,7 @@ import {
   ViewChild,
   ElementRef,
   AfterViewInit,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -19,6 +20,7 @@ import {
 } from '../shared/project.models';
 import { Chart, registerables } from 'chart.js';
 import { TestFilterService } from '../shared/test-filter.service';
+import { HttpClient } from '@angular/common/http';
 
 // Регистрируем все компоненты Chart.js
 Chart.register(...registerables);
@@ -45,32 +47,35 @@ export class ProjectDashboardComponent implements AfterViewInit {
   generationRuns: GenerationRun[] = [
     {
       id: 'run-001',
-      timestamp: new Date('2023-05-20T14:30:00'),
+      timestamp: new Date('2025-06-05T11:30:00'),
       status: GenerationStatus.Completed,
       duration: '3m 45s',
-      testCasesCount: 25,
+      testCasesCount: 1,
+      configuration: '', // добавлено
     },
     {
       id: 'run-002',
-      timestamp: new Date('2023-05-18T10:15:00'),
+      timestamp: new Date('2025-06-05T11:42:00'),
       status: GenerationStatus.Completed,
       duration: '4m 20s',
-      testCasesCount: 32,
+      testCasesCount: 1,
+      configuration: '', // добавлено
     },
     {
       id: 'run-003',
-      timestamp: new Date('2023-05-15T16:45:00'),
+      timestamp: new Date('2025-06-05T11:45:00'),
       status: GenerationStatus.Failed,
       duration: '2m 10s',
       testCasesCount: 0,
+      configuration: '', // добавлено
     },
   ];
 
   // Мок-данные для тест-кейсов
   testCaseStatusData = {
-    New: 12,
-    Reviewed: 25,
-    NeedsRevision: 8,
+    New: 1,
+    Reviewed: 1,
+    NeedsRevision: 1,
   };
 
   // Getter для подсчета общего количества тест-кейсов
@@ -92,7 +97,9 @@ export class ProjectDashboardComponent implements AfterViewInit {
 
   constructor(
     private router: Router,
-    private filterService: TestFilterService
+    private filterService: TestFilterService,
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngAfterViewInit() {
@@ -180,5 +187,24 @@ export class ProjectDashboardComponent implements AfterViewInit {
         queryParams: { tab: 'test-cases', generationRun: runId },
       });
     }
+  }
+
+  loadGenerationHistory(): void {
+    this.http
+      .get<any[]>(`/api/generation-scopes/by-project/${this.project.id}`)
+      .subscribe({
+        next: (data: any[]) => {
+          this.generationRuns = data.map((item: any) => ({
+            id: item.id,
+            timestamp: new Date(item.createdAt || item.timestamp),
+            status: item.status,
+            duration: item.duration || '',
+            testCasesCount: item.testCasesCount || 0,
+            configuration: item.configuration || '', // обязательно
+          }));
+          this.cdr.markForCheck();
+        },
+        error: (err: any) => console.error('Failed to load history', err),
+      });
   }
 }

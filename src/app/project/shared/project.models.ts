@@ -58,7 +58,9 @@ export interface TestCase {
   relatedRequirements?: string[];
   aiConfidence?: number;
   // Добавлено для чекбоксов в UI
-  selected?: boolean;
+  selected?: boolean; // для чекбокса
+  // Ошибка от API
+  error_message?: string;
 }
 
 export interface GenerationRun {
@@ -67,7 +69,10 @@ export interface GenerationRun {
   status: GenerationStatus;
   duration: string;
   testCasesCount: number;
-  configuration?: string;
+  configuration: string;
+  type?: string; // добавлено
+  component?: string; // добавлено
+  selected?: boolean; // для чекбоксов
 }
 
 export interface Project {

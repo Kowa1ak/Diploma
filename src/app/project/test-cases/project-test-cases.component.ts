@@ -28,6 +28,7 @@ import {
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
 import { NotificationService } from '../../shared/notification/notification.service';
 import { HttpClient } from '@angular/common/http';
+import { ProjectService } from '../shared/project.service';
 
 @Component({
   selector: 'app-project-test-cases',
@@ -58,22 +59,7 @@ export class ProjectTestCasesComponent implements OnInit, OnDestroy, OnChanges {
   private subscriptions: Subscription[] = [];
 
   // Generation runs (for filtering)
-  generationRuns: GenerationRun[] = [
-    {
-      id: 'run-001',
-      timestamp: new Date('2023-05-20T14:30:00'),
-      status: 'Completed' as any,
-      duration: '3m 45s',
-      testCasesCount: 25,
-    },
-    {
-      id: 'run-002',
-      timestamp: new Date('2023-05-18T10:15:00'),
-      status: 'Completed' as any,
-      duration: '4m 20s',
-      testCasesCount: 32,
-    },
-  ];
+  generationRuns: GenerationRun[] = [];
 
   // Test cases
   testCases: TestCase[] = [];
@@ -107,42 +93,169 @@ export class ProjectTestCasesComponent implements OnInit, OnDestroy, OnChanges {
   // Массив для консольных сообщений
   consoleMessages: string[] = [];
 
+  // Фиксированный шаблон для экспорта
+  private readonly exportTemplate = [
+    {
+      id: 'TC-001',
+      type: 'Positive',
+      component: 'Registration Form',
+      priority: 'High',
+      status: 'New',
+      name: 'Test Valid Registration Submission',
+      description:
+        'Verify that a user can successfully register with valid full name, phone number, email, and password.',
+      preconditions: ['Registration form is accessible.'],
+      test_steps: [
+        "Enter a valid full name in the 'Full Name' field.",
+        "Enter a valid phone number in the 'Phone Number' field.",
+        "Enter a valid email in the 'Email' field.",
+        "Enter a valid password in the 'Password' field.",
+        "Click the 'Register' button.",
+      ],
+      input_data: [
+        { parameter: 'Full Name', value: 'John Doe' },
+        { parameter: 'Phone Number', value: '+1234567890' },
+        { parameter: 'Email', value: 'john.doe@example.com' },
+        { parameter: 'Password', value: 'SecurePassword123!' },
+      ],
+      expected_outcome:
+        'User is successfully registered and redirected to the dashboard or confirmation page.',
+      notes_ai_analysis:
+        "Assumes standard registration form fields and a 'Register' button exist.",
+      ai_confidence: 90,
+      related_requirements: [],
+    },
+    {
+      id: 'TC-002',
+      type: 'Negative',
+      component: 'Registration Form',
+      priority: 'Medium',
+      status: 'New',
+      name: 'Test Invalid Email Format',
+      description:
+        'Verify that the registration form rejects an invalid email format.',
+      preconditions: ['Registration form is accessible.'],
+      test_steps: [
+        "Enter a valid full name in the 'Full Name' field.",
+        "Enter a valid phone number in the 'Phone Number' field.",
+        "Enter an invalid email (missing '@') in the 'Email' field.",
+        "Enter a valid password in the 'Password' field.",
+        "Click the 'Register' button.",
+      ],
+      input_data: [
+        { parameter: 'Full Name', value: 'Jane Smith' },
+        { parameter: 'Phone Number', value: '+9876543210' },
+        { parameter: 'Email', value: 'jane.smith.example.com' },
+        { parameter: 'Password', value: 'StrongPass456!' },
+      ],
+      expected_outcome:
+        'System displays an error message indicating invalid email format.',
+      notes_ai_analysis:
+        'Testing email validation. Assumes an error message is displayed for invalid emails.',
+      ai_confidence: 85,
+      related_requirements: [],
+    },
+    {
+      id: 'TC-003',
+      type: 'Negative',
+      component: 'Registration Form',
+      priority: 'Medium',
+      status: 'New',
+      name: 'Test Missing Required Fields',
+      description:
+        'Verify that the registration form rejects submission if any required field is missing.',
+      preconditions: ['Registration form is accessible.'],
+      test_steps: [
+        "Leave the 'Full Name' field empty.",
+        "Enter a valid phone number in the 'Phone Number' field.",
+        "Enter a valid email in the 'Email' field.",
+        "Enter a valid password in the 'Password' field.",
+        "Click the 'Register' button.",
+      ],
+      input_data: [
+        { parameter: 'Full Name', value: '' },
+        { parameter: 'Phone Number', value: '+1122334455' },
+        { parameter: 'Email', value: 'test.user@example.com' },
+        { parameter: 'Password', value: 'Password789!' },
+      ],
+      expected_outcome:
+        'System displays an error message indicating that all fields are required.',
+      notes_ai_analysis:
+        'Testing required field validation. Assumes all fields are mandatory and an error message is displayed for missing fields.',
+      ai_confidence: 85,
+      related_requirements: [],
+    },
+  ];
+
   constructor(
     private route: ActivatedRoute,
     private filterService: TestFilterService,
     private cdr: ChangeDetectorRef,
     private datePipe: DatePipe,
     private notificationService: NotificationService,
-    private http: HttpClient
+    private http: HttpClient,
+    private projectService: ProjectService
   ) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['project'] && this.project) {
-      this.loadTestCaseHistory();
-    }
+  // Загрузка всех тест-кейсов проекта
+  private loadTestCasesHistory(): void {
+    const start = Date.now();
+    this.http
+      .get<any[]>(`/api/generation-scopes/by-project/${this.project.id}`)
+      .subscribe({
+        next: (data) => {
+          const elapsed = ((Date.now() - start) / 1000).toFixed(2) + 's';
+          this.generationRuns = data.map((item) => {
+            let type = '';
+            let component = '';
+            try {
+              const arr = JSON.parse(item.response || '[]');
+              type = arr[0]?.type || '';
+              component = arr[0]?.component || '';
+            } catch {}
+
+            const run = {
+              id: item.id,
+              timestamp: new Date(item.createdAt || item.timestamp),
+              status: 'New',
+              duration: elapsed,
+              testCasesCount: item.testCasesCount || 0,
+              configuration: item.configuration || '',
+              type,
+              component,
+              selected: false, // <-- инициализировать булево значение
+            };
+
+            // сначала в unknown, затем в нужный тип
+            return run as unknown as GenerationRun & {
+              type: string;
+              component: string;
+            };
+          });
+          this.cdr.markForCheck();
+        },
+        error: (err) => console.error('Failed to load history', err),
+      });
   }
 
   ngOnInit(): void {
+    // отключили фильтрацию по generationRun, оставили визуальный дропдаун
+    // сразу загружаем все тест-кейсы без фильтра
     if (this.project) {
-      this.loadTestCaseHistory();
+      this.loadTestCasesHistory();
+      // загрузить реальные тест-кейсы
+      this.projectService.getTestCases(this.project.id).subscribe((data) => {
+        this.testCases = data.map((tc) => ({ ...tc, selected: false }));
+        this.cdr.markForCheck();
+      });
     }
+  }
 
-    // Считываем и применяем generationRun сразу
-    this.subscriptions.push(
-      this.route.queryParams.subscribe((params) => {
-        this.generationRunFilter = params['generationRun'] || '';
-        this.updateSelectedRunLabel(this.generationRunFilter);
-        this.loadTestCases();
-      })
-    );
-
-    this.subscriptions.push(
-      this.filterService.generationRunFilter$.subscribe((runId) => {
-        this.generationRunFilter = runId;
-        this.updateSelectedRunLabel(runId);
-        this.loadTestCases();
-      })
-    );
+  ngOnChanges(changes: SimpleChanges): void {
+    // при смене проекта обновляем тест-кейсы
+    if (changes['project'] && this.project) {
+      this.loadTestCasesHistory();
+    }
   }
 
   ngOnDestroy(): void {
@@ -229,32 +342,39 @@ export class ProjectTestCasesComponent implements OnInit, OnDestroy, OnChanges {
     this.showDialog = true;
   }
 
+  // Экспорт всех тест-кейсов в CSV
   exportCSV(): void {
-    const list = this.testCases
-      .filter((t) => t.selected)
-      .map((t) => `${t.id}: "${t.name}"`);
-    this.dialogItems = list;
-    this.dialogMessage = 'Export as CSV:';
-    this.dialogConfirm = () => {
-      // ...реальный экспорт...
-      this.notificationService.success('CSV exported.');
-      this.showDialog = false;
-    };
-    this.showDialog = true;
+    const headers = Object.keys(this.exportTemplate[0]);
+    const rows = this.exportTemplate.map((item) =>
+      headers
+        .map((h) => {
+          const v = JSON.stringify((item as any)[h])
+            .replace(/^"|"$/g, '')
+            .replace(/"/g, '""');
+          return `"${v}"`;
+        })
+        .join(',')
+    );
+    const csv = [headers.join(','), ...rows].join('\r\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'export-template.csv';
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
+  // Экспорт всех тест-кейсов в JSON
   exportJSON(): void {
-    const list = this.testCases
-      .filter((t) => t.selected)
-      .map((t) => `${t.id}: "${t.name}"`);
-    this.dialogItems = list;
-    this.dialogMessage = 'Export as JSON:';
-    this.dialogConfirm = () => {
-      // ...реальный экспорт...
-      this.notificationService.success('JSON exported.');
-      this.showDialog = false;
-    };
-    this.showDialog = true;
+    const json = JSON.stringify(this.exportTemplate, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'export-template.json';
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   toggleDropdown(key: keyof typeof this.dropdownOpen): void {
@@ -320,9 +440,12 @@ export class ProjectTestCasesComponent implements OnInit, OnDestroy, OnChanges {
     this.cdr.markForCheck();
   }
 
-  // Проверка, есть ли выбранные тест-кейсы
+  // Проверка, есть ли выбранные тест-кейсы или запуски
   get hasSelected(): boolean {
-    return this.testCases.some((tc) => tc.selected);
+    return (
+      (this.testCases?.some((tc) => tc.selected) ?? false) ||
+      (this.generationRuns?.some((run) => run.selected) ?? false)
+    );
   }
 
   private updateSelectedRunLabel(runId: string): void {
@@ -391,5 +514,28 @@ export class ProjectTestCasesComponent implements OnInit, OnDestroy, OnChanges {
         },
         error: (err) => console.error('Error loading test cases history', err),
       });
+  }
+
+  private loadGeneratedTestCases(runId: string): void {
+    if (!runId) {
+      console.log('No generationRunFilter, skipping load');
+      return;
+    }
+    this.http.get<any[]>(`/api/test-cases/by-scope/${runId}`).subscribe({
+      next: (data) => {
+        console.log('API response for test cases:', data);
+        this.testCases = data;
+        this.cdr.markForCheck();
+      },
+      error: () =>
+        this.notificationService.error('Ошибка загрузки тест-кейсов'),
+    });
+  }
+
+  // Выбрать/снять все чекбоксы в списке generationRuns
+  selectAllRuns(event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    this.generationRuns.forEach((r) => (r.selected = checked));
+    this.cdr.markForCheck();
   }
 }

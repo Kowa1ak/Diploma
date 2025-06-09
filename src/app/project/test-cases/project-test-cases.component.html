@@ -1,6 +1,9 @@
 <div class="tab-content">
   <h2>Generated Test Cases</h2>
 
+  <!-- Debug: покажем полученные testCases -->
+  <pre *ngIf="testCases.length">{{ testCases | json }}</pre>
+
   <div class="test-case-controls card">
     <div class="control-row">
       <div class="search-box">
@@ -144,73 +147,34 @@
   </div>
 
   <div class="test-cases-table card">
+    <h3>Generation History</h3>
     <table>
       <thead>
         <tr>
           <th class="select-col">
-            <input type="checkbox" (change)="selectAll($event)" />
+            <input type="checkbox" (change)="selectAllRuns($event)" />
           </th>
           <th>ID</th>
-          <th>Name</th>
+          <th>Date/Time</th>
+          <th>Status</th>
           <th>Type</th>
           <th>Component</th>
-          <th>Priority</th>
-          <th>Status</th>
-          <th>Actions</th>
+          <th>Count</th>
+          <th>Duration</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let testCase of filteredTestCases">
+        <tr *ngFor="let run of generationRuns">
           <td class="select-col">
-            <input type="checkbox" [(ngModel)]="testCase.selected" />
+            <input type="checkbox" [(ngModel)]="run.selected" />
           </td>
-          <td>{{ testCase.id }}</td>
-          <td class="test-name">
-            <a [routerLink]="['/project/test-case', testCase.id]">{{
-              testCase.name
-            }}</a>
-          </td>
-          <td>
-            <span class="badge" [class]="testCase.type.toLowerCase()">{{
-              testCase.type
-            }}</span>
-          </td>
-          <td>{{ testCase.component }}</td>
-          <td>
-            <span
-              class="priority"
-              [class]="'priority-' + testCase.priority.toLowerCase()"
-            >
-              {{ testCase.priority }}
-            </span>
-          </td>
-          <td>
-            <span
-              class="status"
-              [class]="
-                'status-' +
-                testCase.reviewStatus.toLowerCase().replace(' ', '-')
-              "
-            >
-              {{ testCase.reviewStatus }}
-            </span>
-          </td>
-          <td class="actions">
-            <button
-              class="icon-button"
-              [routerLink]="['/project/test-case', testCase.id]"
-              title="View Details"
-            >
-              <mat-icon>visibility</mat-icon>
-            </button>
-            <button
-              class="icon-button"
-              (click)="deleteTestCase(testCase.id)"
-              title="Delete"
-            >
-              <mat-icon>delete</mat-icon>
-            </button>
-          </td>
+          <td>{{ run.id }}</td>
+          <td>{{ run.timestamp | date : "dd.MM.yyyy HH:mm" }}</td>
+          <td>{{ run.status }}</td>
+          <td>{{ run.type }}</td>
+          <td>{{ run.component }}</td>
+          <td>{{ run.testCasesCount }}</td>
+          <td>{{ run.duration }}</td>
         </tr>
       </tbody>
     </table>

@@ -49,6 +49,9 @@ export class TestCaseViewComponent implements OnInit {
     source: false,
   };
 
+  // для сырых ответов с ошибкой
+  rawResponse: string | null = null;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -61,13 +64,22 @@ export class TestCaseViewComponent implements OnInit {
     this.http.get<any>(`/api/test-cases/${tcId}`).subscribe({
       next: (resp) => {
         const outer = Array.isArray(resp) ? resp[0] : resp;
-        const raw = outer?.response;
-        const arr: any[] = JSON.parse(raw || '[]');
-        const d = arr[0] || {};
+        let parsed: any = {};
+        try {
+          parsed = JSON.parse(outer.response || '{}');
+        } catch {}
+        // если ошибка от нейросети, показываем сырой ответ
+        if (parsed.error_message) {
+          this.rawResponse = outer.response || '';
+          this.cdr.markForCheck();
+          return;
+        }
+        const d = Array.isArray(parsed) ? parsed[0] : parsed;
         this.testCase = {
           id: d.id,
           name: d.name,
           type: d.type,
+          source: d.source,
           component: d.component,
           priority: d.priority,
           reviewStatus: d.status,
@@ -79,7 +91,8 @@ export class TestCaseViewComponent implements OnInit {
           notes: d.notes_ai_analysis,
           aiConfidence: d.ai_confidence / 100,
           relatedRequirements: d.related_requirements,
-          generatedAt: new Date(outer.createdAt), // <-- добавлено
+          error_message: d.error_message, // если есть
+          generatedAt: new Date(outer.createdAt),
         } as TestCase;
 
         // заполнить поля для просмотра
